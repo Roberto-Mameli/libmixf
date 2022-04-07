@@ -1,0 +1,71 @@
+####################################################################################
+#   ---------------------------------------                                        #
+#   C/C++ Mixed Functions Library (libmixf)                                        #
+#   ---------------------------------------                                        #
+#   Copyright 2019-2021 Roberto Mameli                                             #
+#                                                                                  #
+#   Licensed under the Apache License, Version 2.0 (the "License");                #
+#   you may not use this file except in compliance with the License.               #
+#   You may obtain a copy of the License at                                        #
+#                                                                                  #
+#       http://www.apache.org/licenses/LICENSE-2.0                                 #
+#                                                                                  #
+#   Unless required by applicable law or agreed to in writing, software            #
+#   distributed under the License is distributed on an "AS IS" BASIS,              #
+#   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.       #
+#   See the License for the specific language governing permissions and            #
+#   limitations under the License.                                                 #
+#   ------------------------------------------------------------------------       #
+#                                                                                  #
+#   Revision History:                                                              #
+#   -----------------                                                              #
+#   v.1.0.0 (Oct 2019)  - First Version                                            #
+#                       - Named libmisc                                            #
+#                       - License-free Software (i.e. Proprietary)                 #
+#                       - Static/Dinamic C/C++ Library which contains several      #
+#                         general purpose functions organized in the following     #
+#                         families:                                                #
+#                          - File and File System Handling                         #
+#                          - Time and Date Handling                                #
+#                          - String Handling                                       #
+#                          - Configuration Files Handling                          #
+#                          - Log Handling                                          #
+#                          - License Handling                                      #
+#                          - Lock Handling                                         #
+#   v.2.0.0 (Nov 2019)  - Still named libmisc and still License-Free Software      #
+#                         (i.e. Proprietary)                                       #
+#                       - Added a new family of functions:                         #
+#                          - Counters Handling                                     #
+#   v.2.1.0 (Jun 2021)  - Changed name from libmisc to libmixf (a libmisc library  #
+#                         was already available on sourceforge)                    #
+#                       - Licensed under the Apache License, Version 2.0           #
+#                       - Updated as described below:                              #
+#                         - Changed names to Error Definition Macros in            #
+#                           headers\mixf.h (to avoid conflicts with C standard     #
+#                           library)                                               #
+#                         - Introduction of some new parameter types in the        #
+#                           family of Configuration Files Handling functions       #
+#                           (ipv4, mail, url) along with the corresponding         #
+#                           functions needed to manage them, i.e.:                 #
+#                             - AddMailParam()                                     #
+#                             - AddIPv4Param()                                     #
+#                             - AddUrlParam()                                      #
+#                             - GetMailParamValue()                                #
+#                             - GetIPv4ParamValue()                                #
+#                             - GetUrlParamValue()                                 #
+#                         - Introduction of the following functions in the String  #
+#                           Handling category:                                     #
+#                             - CheckMailValidity()                                #
+#                             - CheckIPv4AddValidity()                             #
+#                             - CheckUrlValidity()                                 #
+#                             - GenerateToken()                                    #
+#                         - Corrected some bugs in the following functions         #
+#                           (License Handling):                                    #
+#                             - CreateLicense()                                    #
+#                             - CheckLicense()                                     #
+#                         - Optimization of Configuration File Handling functions  #
+#                           (added dynamic parameters allocation vs static         #
+#                            allocation employed before). Introduction of:         #
+#                             - InitParamList()                                    #
+#                                                                                  #
+####################################################################################
