@@ -123,14 +123,14 @@ exits (probably another instance is still running), otherwise it sets
 a lock that will be released at program termination.
 After that, the program enters an infinite loop, in which it expects
 input from the keyboard. When a key other than space is pressed, the
-program simply update some internal counters. Counters are managed through
+program simply updates some internal counters. Counters are managed through
 counters handling libmixf functions.
 The program collects counters with a base interval of 5 minutes (e.g. at
 HH:00, HH.05, and so on up to HH:55) and an aggregate interval of 30 minutes
 (e.g. at HH:00 and HH:30 of every hour). Base counters are dumped to
 "../stats/base" directory, while aggregate counters are dumped to
 "../stats/aggr".
-Te program collects the following scalar counters:
+The program collects the following scalar counters:
    1. TotalNumberLowerCaseLetters
    2. TotalNumberUpperCaseLetters
    3. TotalNumberDigits
