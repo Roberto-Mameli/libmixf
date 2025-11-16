@@ -2,7 +2,7 @@
 #   -----------------------------------------                                      #
 #   C/C++ Mixed Functions Library (libmixf)                                        #
 #   -----------------------------------------                                      #
-#   Copyright 2019-2021 Roberto Mameli                                             #
+#   Copyright 2019-2025 Roberto Mameli                                             #
 #                                                                                  #
 #   Licensed under the Apache License, Version 2.0 (the "License");                #
 #   you may not use this file except in compliance with the License.               #
@@ -20,5 +20,5 @@
 ####################################################################################
 
 $LICENSEFILES =  Output_Example.out
-$StringToConvert = Questo è un esempio di stringa da convertire
+$StringToConvert = This is an example of string that shall be converted, but parameter name is wrong
 

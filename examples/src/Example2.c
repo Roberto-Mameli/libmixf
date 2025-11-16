@@ -2,7 +2,7 @@
  * -----------------------------------------                                      *
  * C/C++ Mixed Functions Library (libmixf)                                        *
  * -----------------------------------------                                      *
- * Copyright 2019-2021 Roberto Mameli                                             *
+ * Copyright 2019-2025 Roberto Mameli                                             *
  *                                                                                *
  * Licensed under the Apache License, Version 2.0 (the "License");                *
  * you may not use this file except in compliance with the License.               *
@@ -24,21 +24,21 @@
  *              handling.                                                         *
  *                                                                                *
  * NOTE WELL:   THIS EXAMPLE USES THE FOLLOWING libmixf FUNCTIONS:                *
- *              - CheckLockPresent()    // Lock handling functions                *
- *              - SetLock()                                                       *
- *              - ResetLock()                                                     *
- *              - DefineScalarCtrNum()  // Counters handling                      *
- *              - DefineScalarCtr()                                               *
- *              - DefineVectorCtrNum()                                            *
- *              - DefineVectorCtr()                                               *
- *              - SetVectorCtrInstName()                                          *
- *              - DefineBaseDump()                                                *
- *              - DefineAggrDump()                                                *
- *              - StartCounters()                                                 *
- *              - StopCounters()                                                  *
- *              - IncrPegScalarCtr()                                              *
- *              - IncrPegVectorCtr()                                              *
- *              - CheckAndDumpCtr()                                               *
+ *              - check_lock_present()     // Lock handling functions             *
+ *              - set_lock()                                                      *
+ *              - reset_lock()                                                    *
+ *              - define_scalar_ctr_num()  // Counters handling                   *
+ *              - define_scalar_ctr()                                             *
+ *              - define_vector_ctr_num()                                         *
+ *              - define_vector_ctr()                                             *
+ *              - set_vector_ctr_inst_name()                                      *
+ *              - define_base_dump()                                              *
+ *              - define_aggr_dump()                                              *
+ *              - start_counters()                                                *
+ *              - stop_counters()                                                 *
+ *              - incr_peg_scalar_ctr()                                           *
+ *              - incr_peg_vector_ctr()                                           *
+ *              - check_and_dump_ctr()                                            *
  *                                                                                *
  *  ----------------------------------------------------------------------------  *
  *  DISCLAIMER                                                                    *
@@ -103,15 +103,15 @@
 #define DIGITVECTORINST     10
 #define NUMVECTORCTR        3
 
-#define WAKEUPTIMER     60                                      /* used to wake up every minute to check if a dump is needed */
+#define WAKEUPTIMER     30                                      /* used to wake up every minute to check if a dump is needed */
 
 /* Base Dump Params */
 #define BASEDUMPDIR     "../stats/base"
-#define BASEDUMPTIMES   "00,05,10,15,20,25,30,35,40,45,50,55"   /* every 5 minutes */
+#define BASEDUMPTIMES   "00,03,06,09,12,15,18,21,24,27,30,33,36,39,42,45,48,51,54,57"   /* every 3 minutes */
 
 /* Aggr Dump Params */
 #define AGGRDUMPDIR     "../stats/aggr"
-#define AGGRDUMPTIMES   "0000,0030,0100,0130,0200,0230,0300,0330,0400,0430,0500,0530,0600,0630,0700,0730,0800,0830,0900,0930,1000,1030,1100,1130,1200,1230,1300,1330,1400,1430,1500,1530,1600,1630,1700,1730,1800,1830,1900,1930,2000,2030,2100,2130,2200,2230,2300,2330"   /* every 30 minutes */
+#define AGGRDUMPTIMES   "0000,0015,0030,0045,0100,0115,0130,0145,0200,0215,0230,0245,0300,0315,0330,0345,0400,0415,0430,0445,0500,0515,0530,0545,0600,0615,0630,0645,0700,0715,0730,0745,0800,0815,0830,0845,0900,0915,0930,0945,1000,1015,1030,1045,1100,1115,1130,1145,1200,1215,1230,1245,1300,1315,1330,1345,1400,1415,1430,1445,1500,1515,1530,1545,1600,1615,1630,1645,1700,1715,1730,1745,1800,1815,1830,1845,1900,1915,1930,1945,2000,2015,2030,2045,2100,2115,2130,2145,2200,2215,2230,2245,2300,2315,2330,2345"   /* every 15 minutes */
 
 /* Lock File Name */
 #define LOCKFILENAME    "./.lock.lck"
@@ -123,7 +123,7 @@
 /********************
  * Global variables *
  ********************/
-Boolean Exit=FALSE;
+bool Exit=false;
 
 char    ScalarCounters[NUMSCALARCTR][STRINGLEN] =
         {
@@ -162,20 +162,20 @@ static Error InitCounters(void)
     char    Inst[2];
 
     /* First, initialize scalar counters */
-    if ( (res=DefineScalarCtrNum(NUMSCALARCTR)) != MIXFOK )
+    if ( (res=define_scalar_ctr_num(NUMSCALARCTR)) != MIXFOK )
         return (res);
     for (i=0;i<NUMSCALARCTR;i++)
-        if ( (res=DefineScalarCtr(i,PEGCTR,0,ScalarCounters[i])) != MIXFOK )
+        if ( (res=define_scalar_ctr(i,PEGCTR,0,ScalarCounters[i])) != MIXFOK )
             return (res);
     /* The last scalar counter is defined as a roller counter with initial value set to 0 */
-    if ( (res=DefineScalarCtr(PLUSMINUSROLLERCTR,ROLLERCTR,0,ScalarCounters[PLUSMINUSROLLERCTR])) != MIXFOK )
+    if ( (res=define_scalar_ctr(PLUSMINUSROLLERCTR,ROLLERCTR,0,ScalarCounters[PLUSMINUSROLLERCTR])) != MIXFOK )
         return (res);
 
     /* Second, initialize vector counters */
-    if ( (res=DefineVectorCtrNum(NUMVECTORCTR)) != MIXFOK )
+    if ( (res=define_vector_ctr_num(NUMVECTORCTR)) != MIXFOK )
         return (res);
     for (i=0;i<NUMVECTORCTR;i++)
-        if ( (res=DefineVectorCtr(i,VectorCounterInstNo[i],PEGCTR,0,VectorCounters[i],VectorCounterInst[i])) != MIXFOK )
+        if ( (res=define_vector_ctr(i,VectorCounterInstNo[i],PEGCTR,0,VectorCounters[i],VectorCounterInst[i])) != MIXFOK )
             return (res);
 
     /* Now, give a name to all instances of all vector counters */
@@ -183,27 +183,27 @@ static Error InitCounters(void)
     for (i=0; i < LOWERVECTORINST; i++)
     {
         Inst[0] = 'a' + (char) i;
-        if ( (res=SetVectorCtrInstName(LOWERVECTORID,i,Inst) )!= MIXFOK )
+        if ( (res=set_vector_ctr_inst_name(LOWERVECTORID,i,Inst) )!= MIXFOK )
             return (res);
     }
     for (i=0; i < UPPERVECTORINST; i++)
     {
         Inst[0] = 'A' + (char) i;
-        if ( (res=SetVectorCtrInstName(UPPERVECTORID,i,Inst) )!= MIXFOK )
+        if ( (res=set_vector_ctr_inst_name(UPPERVECTORID,i,Inst) )!= MIXFOK )
             return (res);
     }
     for (i=0; i < DIGITVECTORINST; i++)
     {
         Inst[0] = '0' + (char) i;
-        if ( (res=SetVectorCtrInstName(DIGITVECTORID,i,Inst) )!= MIXFOK )
+        if ( (res=set_vector_ctr_inst_name(DIGITVECTORID,i,Inst) )!= MIXFOK )
             return (res);
     }
 
     /* Define Base and Aggregate Dump parameters */
-    if ( (res=DefineBaseDump(BASEDUMPDIR,NULL,BASEDUMPTIMES)) != MIXFOK)
+    if ( (res=define_base_dump(BASEDUMPDIR,NULL,BASEDUMPTIMES)) != MIXFOK)
         return (res);
 
-    res=DefineAggrDump(AGGRDUMPDIR,NULL,AGGRDUMPTIMES);
+    res=define_aggr_dump(AGGRDUMPDIR,NULL,AGGRDUMPTIMES);
 
     return (res);
 }
@@ -222,8 +222,8 @@ static void signalHandler(int sigType)
         }
         case SIGINT:
         case SIGTERM:
-        {   /* Set global variable EXIT to TRUE in order to force clean exit */
-            Exit = TRUE;
+        {   /* Set global variable EXIT to true in order to force clean exit */
+            Exit = true;
             break;
         }
         default:
@@ -256,7 +256,7 @@ int main(int argc, char *argv[], char *envp[])
     sigaction (SIGTERM,&sa,NULL);
 
     /* Check if a lock is present */
-    if (CheckLockPresent(LOCKFILENAME))
+    if (check_lock_present(LOCKFILENAME))
     {   /* A lock is present, therefore another instance of the same executable is already running */
         printf ("Lock detected... probably another instance is still running\n");
         printf ("Exiting....\n");
@@ -264,7 +264,7 @@ int main(int argc, char *argv[], char *envp[])
     }
 
     /* There is no instance already running - Set a lock */
-    if (SetLock(LOCKFILENAME) != MIXFOK)
+    if (set_lock(LOCKFILENAME) != MIXFOK)
     {   /* Not able to set a new lock */
         printf ("Not able to set a new lock\n");
         printf ("Exiting....\n");
@@ -277,100 +277,107 @@ int main(int argc, char *argv[], char *envp[])
     {   /* Not able to set a init counters */
         printf ("Not able to init counters\n");
         printf ("Exiting....\n");
-        ResetLock(LOCKFILENAME);
+        reset_lock(LOCKFILENAME);
         exit (-1);
     }
+/* DEBUG */ printf ("%d\n",__LINE__);
 
     /* Start Counters */
-    if ( (StartCounters()) != MIXFOK )
+    if ( (start_counters()) != MIXFOK )
     {   /* Not able to start counters */
         printf ("Not able to start counters\n");
         printf ("Exiting....\n");
-        ResetLock(LOCKFILENAME);
+        reset_lock(LOCKFILENAME);
         exit (-1);
     }
+
+/* DEBUG */ printf ("%d\n",__LINE__);
 
     alarm (WAKEUPTIMER);            /* used to wake up every minute in order to check if counters shall be dumped */
 
     /* Infinite Loop */
     system ("clear");
-    while (Exit==FALSE)
+    while (Exit==false)
     {
         printf ("Please press any key (SPACE to exit)\n");
         if ((c = getchar())!= EOF)
         {
             if (c==' ')
             {
-                Exit = TRUE;
+                Exit = true;
                 continue;
             }
             if ( (c>='a') && (c<='z') )
             {   /* User pressed a key corresponding to a lowercase character */
-                if ( (err=IncrPegScalarCtr(LOWERCASECTR)) != MIXFOK)
+                if ( (err=incr_peg_scalar_ctr(LOWERCASECTR)) != MIXFOK)
                     printf ("Error in %s:%d\n",__FILE__,__LINE__);
                 inst = (int) (c-'a');
-                if ( (err=IncrPegVectorCtr(LOWERVECTORID,&inst)) != MIXFOK)
+                if ( (err=incr_peg_vector_ctr(LOWERVECTORID,&inst)) != MIXFOK)
                     printf ("Error in %s:%d\n",__FILE__,__LINE__);
                 continue;
             }
             if ( (c>='A') && (c<='Z') )
             {   /* User pressed a key corresponding to an uppercase character */
-                if ( (err=IncrPegScalarCtr(UPPERCASECTR)) != MIXFOK)
+                if ( (err=incr_peg_scalar_ctr(UPPERCASECTR)) != MIXFOK)
                     printf ("Error in %s:%d\n",__FILE__,__LINE__);
                 inst = (int) (c-'A');
-                if ( (err=IncrPegVectorCtr(UPPERVECTORID,&inst)) != MIXFOK)
+                if ( (err=incr_peg_vector_ctr(UPPERVECTORID,&inst)) != MIXFOK)
                     printf ("Error in %s:%d\n",__FILE__,__LINE__);
                 continue;
             }
             if ( (c>='0') && (c<='9') )
             {   /* User pressed a key corresponding to a digit */
-                if ( (err=IncrPegScalarCtr(DIGITCTR)) != MIXFOK)
+                if ( (err=incr_peg_scalar_ctr(DIGITCTR)) != MIXFOK)
                     printf ("Error in %s:%d\n",__FILE__,__LINE__);
                 inst = (int) (c-'0');
-                if ( (err=IncrPegVectorCtr(DIGITVECTORID,&inst)) != MIXFOK)
+                if ( (err=incr_peg_vector_ctr(DIGITVECTORID,&inst)) != MIXFOK)
                     printf ("Error in %s:%d\n",__FILE__,__LINE__);
                 continue;
             }
             if (c == '+')
             {   /* User pressed +, increase Roller counter PLUSMINUSROLLERCTR */
-                if ( (err=UpdateRollerScalarCtr(PLUSMINUSROLLERCTR,1)) == MIXFOVFL)
+                if ( (err=update_roller_scalar_ctr(PLUSMINUSROLLERCTR,1)) == MIXFOVFL)
                     printf ("Overflow in updating %s (%s:%d)\n",ScalarCounters[PLUSMINUSROLLERCTR],__FILE__,__LINE__);
                 continue;
             }
             if (c == '-')
             {   /* User pressed -, decrease Roller counter PLUSMINUSROLLERCTR */
-                if ( (err=UpdateRollerScalarCtr(PLUSMINUSROLLERCTR,-1)) == MIXFOVFL)
+                if ( (err=update_roller_scalar_ctr(PLUSMINUSROLLERCTR,-1)) == MIXFOVFL)
                     printf ("Underflow in updating %s (%s:%d)\n",ScalarCounters[PLUSMINUSROLLERCTR],__FILE__,__LINE__);
                 continue;
             }
             if (c != CR)
             {   /* Any other char, excluding CR, is counted as other */
-                if ( (err=IncrPegScalarCtr(OTHERCHARCTR)) != MIXFOK)
+                if ( (err=incr_peg_scalar_ctr(OTHERCHARCTR)) != MIXFOK)
                     printf ("Error in %s:%d\n",__FILE__,__LINE__);
                 continue;
             }
         }   /* if ((c = getchar())!= EOF)) */
 
-        if (CheckAndDumpCtr() != MIXFOK)
+/* DEBUG */ printf ("%d\n",__LINE__);
+
+        if (check_and_dump_ctr() != MIXFOK)
         {   /* Not able to dump counters */
             printf ("Not able to dump counters\n");
             printf ("Exiting....\n");
-            ResetLock(LOCKFILENAME);
+            reset_lock(LOCKFILENAME);
             exit (-1);
         }
+
+/* DEBUG */ printf ("%d\n",__LINE__);
 
     }   /* Infinite Loop */
 
     /* SPACE was pressed - close counters and reset lock */
-    if (StopCounters() != MIXFOK)
+    if (stop_counters() != MIXFOK)
     {   /* Not able to dump counters */
         printf ("Not able to stop counters\n");
         printf ("Exiting....\n");
-        ResetLock(LOCKFILENAME);
+        reset_lock(LOCKFILENAME);
         exit (-1);
     }
 
-    if (ResetLock(LOCKFILENAME) != MIXFOK)
+    if (reset_lock(LOCKFILENAME) != MIXFOK)
     {   /* Not able to reset lock */
         printf ("Not able to reset lock\n");
         printf ("Exiting....\n");

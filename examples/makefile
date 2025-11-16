@@ -2,7 +2,7 @@
 #   -----------------------------------------                                      #
 #   C/C++ Mixed Functions Library (libmixf)                                        #
 #   -----------------------------------------                                      #
-#   Copyright 2019-2021 Roberto Mameli                                             #
+#   Copyright 2019-2025 Roberto Mameli                                             #
 #                                                                                  #
 #   Licensed under the Apache License, Version 2.0 (the "License");                #
 #   you may not use this file except in compliance with the License.               #
@@ -18,20 +18,11 @@
 #   ------------------------------------------------------------------------       #
 #                                                                                  #
 #   FILE:        libmixf examples makefile                                         #
-#   VERSION:     2.1.0                                                             #
+#   VERSION:     3.0.0                                                             #
 #   AUTHOR(S):   Roberto Mameli                                                    #
 #   PRODUCT:     Library libmixf - general purpose library                         #
-#   DESCRIPTION: Source file for various general purpose functions                 #
-#                about:                                                            #
-#                - File and File System Handling                                   #
-#                - Time and Date Handling                                          #
-#                - String Handling                                                 #
-#                - Configuration Files Handling                                    #
-#                - Log Handling                                                    #
-#                - License Handling                                                #
-#                - Lock Handling                                                   #
-#                - Counters Handling                                               #
-#   REV HISTORY: See updated Revision History in file RevHistory.txt               #
+#   DESCRIPTION: Makefile for libmixf examples                                     #
+#   REV HISTORY: See updated Revision History in file CHANGELOG.md                 #
 #   NOTE WELL:   If an application needs services and functions from this          #
 #                API, it MUST necessarily:                                         #
 #                - include the library header file                                 #

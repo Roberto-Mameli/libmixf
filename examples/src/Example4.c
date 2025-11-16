@@ -2,7 +2,7 @@
  * -----------------------------------------                                      *
  * C/C++ Mixed Functions Library (libmixf)                                        *
  * -----------------------------------------                                      *
- * Copyright 2019-2021 Roberto Mameli                                             *
+ * Copyright 2019-2025 Roberto Mameli                                             *
  *                                                                                *
  * Licensed under the Apache License, Version 2.0 (the "License");                *
  * you may not use this file except in compliance with the License.               *
@@ -19,13 +19,14 @@
  *                                                                                *
  * FILE:        Example4.c                                                        *
  *                                                                                *
- * DESCRIPTION: This example performs a loop repeated 30 times. At generic        *
+ * DESCRIPTION: This example performs a loop repeated 20 times. At generic        *
  *              iteration i, it creates a random token of length i, with          *
- *              characters that belong to a charset composed by uppercase         *
+ *              characters that belong to a charset composed by lowercase         *
  *              letters and digits (0-9)                                          *
+ *              After that, it creates 20 random UUID v4 identifiers              *
  *                                                                                *
  * NOTE WELL:   THIS EXAMPLE USES THE FOLLOWING libmixf FUNCTIONS:                *
- *              - GenerateToken()  // String Handling                             *
+ *              - generate_token()  // String Handling                            *
  *                                                                                *
  *  ----------------------------------------------------------------------------  *
  *  DISCLAIMER                                                                    *
@@ -64,14 +65,24 @@
 /* Main function */
 int main (int argc, char *argv[], char *envp[])
 {
-    char token[32];
-    char charset[] = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    char token[40];
+    char charset[] = "0123456789abcdefghijklmnopqrstuvwxyz";
 
     int i;
 
-    for (i=0; i<30; i++)
+    /* First, create 20 token of increasing length (from 1 to 20 characters)*/
+    for (i=0; i<20; i++)
     {
-        GenerateToken(token,charset,i+1);
+        generate_token(token,charset,i+1);
         printf ("Iterazione: %d, Token: %s\n",i,token);
+    }
+
+    
+    for (i=0; i<20; i++)
+    {
+        generate_token(token,charset,36);
+        token[14] = '4';
+        token[8] = token[13] = token[18] =token[23] = '-';
+        printf ("Iterazione: %d, UUID v4: %s\n",i,token);
     }
 }

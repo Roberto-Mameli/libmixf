@@ -2,7 +2,7 @@
 #   -----------------------------------------                                      #
 #   C/C++ Mixed Functions Library (libmixf)                                        #
 #   -----------------------------------------                                      #
-#   Copyright 2019-2021 Roberto Mameli                                             #
+#   Copyright 2019-2025 Roberto Mameli                                             #
 #                                                                                  #
 #   Licensed under the Apache License, Version 2.0 (the "License");                #
 #   you may not use this file except in compliance with the License.               #
@@ -19,6 +19,5 @@
 #   This is an example configuration file for Example 1                            #
 ####################################################################################
 
-$LICENSEFILE =  Output_Example2.out
-$STRINGTOCONVERT = Quel ramo del lago di Como, che volge a mezzogiorno, tra due catene non interrotte di monti, tutto a seni e a golfi, a seconda dello sporgere e del rientrare di quelli, vien, quasi a un tratto, a ristringersi, e a prender corso e figura di fiume, tra un promontorio a destra, e un’ampia costiera dall’altra parte
-
+$LICENSEFILE =  Output_Example1.out
+$STRINGTOCONVERT = May the Force be with you, always. In every challenge we face, understanding that we are part of something greater can provide the strength and courage to overcome. This sentiment encapsulates hope, unity, and the belief in a force beyond ourselves that guides us through dark times.

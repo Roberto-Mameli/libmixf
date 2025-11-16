@@ -2,7 +2,7 @@
 #   -----------------------------------------                                      #
 #   C/C++ Mixed Functions Library (libmixf)                                        #
 #   -----------------------------------------                                      #
-#   Copyright 2019-2021 Roberto Mameli                                             #
+#   Copyright 2019-2025 Roberto Mameli                                             #
 #                                                                                  #
 #   Licensed under the Apache License, Version 2.0 (the "License");                #
 #   you may not use this file except in compliance with the License.               #
@@ -19,11 +19,13 @@
 #   This is an example configuration file for Example 1                            #
 ####################################################################################
 
-$LICENSEFILE =  Output_Example.out
-$STRINGTOCONVERT = Questo è un esempio di stringa da convertire
+# The parameters are assigned twice, the reassignment overwrites the first assignment
+# Configuration Parameters Handling functions notify multiple assignment
+$LICENSEFILE =  License_Example_1.out
+$STRINGTOCONVERT = This is an example of string that shall be converted
 
-$LICENSEFILE =  Output_Example1.out
-$STRINGTOCONVERT = FEATURE X | ENABLED | CAPABILITY | 16 | EXPIRATION | NEVER
+$LICENSEFILE =  License_Example_2.out
+$STRINGTOCONVERT = {"feature":"xyz","enabled":true,"capability":16,"expiration":"never"}
 
 #DUMMY = dummy
 

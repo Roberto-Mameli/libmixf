@@ -585,7 +585,7 @@ Error get_num_param_value (char *param, int *value, bool *prov)
  * The string in which the parameter value is copied (second parameter) is not allocated
  * by the routine, rather shall be allocated by the caller.
  */
-Error get_lit_param_value (char *param, char *value, bool *prov)
+Error get_list_param_value (char *param, char *value, bool *prov)
 {
     int     i;
     Error   res = MIXFPARAMUNKNOWN;

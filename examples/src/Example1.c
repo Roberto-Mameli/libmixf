@@ -2,7 +2,7 @@
  * -----------------------------------------                                      *
  * C/C++ Mixed Functions Library (libmixf)                                        *
  * -----------------------------------------                                      *
- * Copyright 2019-2021 Roberto Mameli                                             *
+ * Copyright 2019-2025 Roberto Mameli                                             *
  *                                                                                *
  * Licensed under the Apache License, Version 2.0 (the "License");                *
  * you may not use this file except in compliance with the License.               *
@@ -34,17 +34,17 @@
  *              check that the content is equal to $STRINGTOCONVERT.              *
  *                                                                                *
  * NOTE WELL:   THIS EXAMPLE USES THE FOLLOWING libmixf FUNCTIONS:                *
- *              - CheckFileNameValidity()  // File and File System Handling       *
- *              - ResetParamList()         // Configuration Files handling        *
- *              - InitParamList()                                                 *
- *              - AddLiteralParam()                                               *
- *              - AddFilenameParam()                                              *
- *              - ParseCfgParamFile()                                             *
- *              - GetLitParamValue()                                              *
- *              - GetFNameParamValue()                                            *
- *              - ClearEventList()                                                *
- *              - CreateLicense()          // License Handling                    *
- *              - CheckLicense()                                                  *
+ *              - check_file_name_validity()  // File and File System Handling    *
+ *              - reset_param_list()          // Configuration Files handling     *
+ *              - init_param_list()                                               *
+ *              - add_literal_param()                                             *
+ *              - add_filename_param()                                            *
+ *              - parse_cfg_param_file()                                          *
+ *              - get_list_param_value()                                          *
+ *              - get_fname_param_value()                                         *
+ *              - clear_event_list()                                              *
+ *              - create_license()            // License Handling                 *
+ *              - check_license()                                                 *
  *                                                                                *
  *  ----------------------------------------------------------------------------  *
  *  DISCLAIMER                                                                    *
@@ -253,8 +253,11 @@ int PrintMenu (void)
  ***************************************/
 void WaitEnterKey (void)
 {
+    int c;
+
     printf ("\n\tPress the ENTER key to continue...\n");
-    system ("read");
+    while ((c = getchar()) != '\n' && c != EOF);
+    while (getchar() != '\n');
     return;
 }
 
@@ -277,34 +280,34 @@ int main(int argc, char *argv[], char *envp[])
     char        LicenseFileName[MAXFILENAMELEN],
                 CfgFileName[MAXFILENAMELEN];
     FILE        *LicenseFd;
-    Boolean     prov;
+    bool     prov;
 
 
     /* Retrieve host name and host id */
     hostid = gethostid();
-    sprintf (hostidstr,"%#0x",hostid);
+    sprintf (hostidstr,"0x%08x",hostid);
     gethostname(hostname,STRINGLEN);
 
     /* Initialize parameters */
-    ResetParamList();
-    if ( (err=InitParamList (2)) != MIXFOK)
+    reset_param_list();
+    if ( (err=init_param_list (2)) != MIXFOK)
     {
         PrintError (err);
         exit (-1);
     }
-    if ( (err=AddLiteralParam ("$STRINGTOCONVERT",TRUE,"",STRINGNOTPROV,UNDEFINED,STRINGREDEF,UNDEFINED)) != MIXFOK)
+    if ( (err=add_literal_param ("$STRINGTOCONVERT",true,"",STRINGNOTPROV,UNDEFINED,STRINGREDEF,UNDEFINED)) != MIXFOK)
     {
         PrintError (err);
         exit (-1);
     }
-    if ( (err=AddFilenameParam ("$LICENSEFILE",TRUE,"",FILENOTPROV,UNDEFINED,FILEREDEF,FILENOTVALID)) != MIXFOK)
+    if ( (err=add_filename_param ("$LICENSEFILE",true,"",FILENOTPROV,UNDEFINED,FILEREDEF,FILENOTVALID)) != MIXFOK)
     {
         PrintError (err);
         exit (-1);
     }
 
     /* Check command line arguments */
-    if ( (argc != 2) || ((CheckFileNameValidity(argv[1]))!=MIXFOK) )
+    if ( (argc != 2) || ((check_file_name_validity(argv[1]))!=MIXFOK) )
     {
         PrintUsage(argv[0]);
         exit (-1);
@@ -312,7 +315,7 @@ int main(int argc, char *argv[], char *envp[])
 
     /* Parse Configuration File */
     strcpy (CfgFileName,argv[1]);
-    if ( (err=ParseCfgParamFile(CfgFileName,&line,&listofevents)) != MIXFOK)
+    if ( (err=parse_cfg_param_file(CfgFileName,&line,&listofevents)) != MIXFOK)
     {
         PrintError(err);
         if ( (err==MIXFFORMATERROR) || (err==MIXFPARAMUNKNOWN) )
@@ -325,24 +328,24 @@ int main(int argc, char *argv[], char *envp[])
      * if one of the events is FATAL (STRINGNOTPROV, FILENOTPROV, FILENOTVALID) */
     if (PrintEventList(listofevents)!=MIXFOK)
     {
-        ClearEventList(&listofevents);
+        clear_event_list(&listofevents);
         exit (-1);
     }
 
     /* Clears the list of events */
     if (listofevents != NULL)
     {
-        ClearEventList(&listofevents);
+        clear_event_list(&listofevents);
         WaitEnterKey();
     }
 
     /* Get the value of parameters */
-    if ( (err=GetLitParamValue("$STRINGTOCONVERT",String,&prov)) != MIXFOK )
+    if ( (err=get_list_param_value("$STRINGTOCONVERT",String,&prov)) != MIXFOK )
     {
         PrintError(err);
         exit (-1);
     }
-    if ( (err=GetFNameParamValue("$LICENSEFILE",LicenseFileName,&prov)) != MIXFOK)
+    if ( (err=get_fname_param_value("$LICENSEFILE",LicenseFileName,&prov)) != MIXFOK)
     {
         PrintError(err);
         exit (-1);
@@ -364,9 +367,9 @@ int main(int argc, char *argv[], char *envp[])
         {
             case 1:
             {   /* Encrypt and create license */
-                if (CreateLicense (String,hostname,hostidstr))
+                if (create_license (String,hostname,hostidstr))
                 {
-                    fprintf (stderr, "Found problem when calling CreateLicense()\n");
+                    fprintf (stderr, "Found problem when calling create_license()\n");
                     WaitEnterKey();
                     break;
                 }
@@ -384,13 +387,13 @@ int main(int argc, char *argv[], char *envp[])
             case 2:
             {   /* Check license */
                 char        Decrypted[STRINGLEN];
-                if (CheckLicense(LicenseFileName,Decrypted) != MIXFOK)
+                if (check_license(LicenseFileName,Decrypted) != MIXFOK)
                 {
                     fprintf (stderr, "Cannot read the license file\n");
                     WaitEnterKey();
                     break;
                 }
-                GetLitParamValue("$STRINGTOCONVERT",String,&prov);
+                get_list_param_value("$STRINGTOCONVERT",String,&prov);
                 printf ("Decrypted string is %s\n",Decrypted);
                 if (strcmp (Decrypted,String))
                     printf ("License check failed\n");
@@ -401,7 +404,7 @@ int main(int argc, char *argv[], char *envp[])
             }
             case 3:
             {   /* Force reload */
-                if ( (err=ParseCfgParamFile(CfgFileName,&line,&listofevents)) != MIXFOK)
+                if ( (err=parse_cfg_param_file(CfgFileName,&line,&listofevents)) != MIXFOK)
                 {
                     PrintError(err);
                     if ( (err==MIXFFORMATERROR) || (err==MIXFPARAMUNKNOWN) )
@@ -414,24 +417,24 @@ int main(int argc, char *argv[], char *envp[])
                  * if one of the events is FATAL (STRINGNOTPROV, FILENOTPROV, FILENOTVALID) */
                 if (PrintEventList(listofevents)!=MIXFOK)
                 {
-                    ClearEventList(&listofevents);
+                    clear_event_list(&listofevents);
                     exit (-1);
                 }
 
                 /* Clears the list of events */
                 if (listofevents != NULL)
                 {
-                    ClearEventList(&listofevents);
+                    clear_event_list(&listofevents);
                     WaitEnterKey();
                 }
 
                 /* Get the value of parameters */
-                if ( (err=GetLitParamValue("$STRINGTOCONVERT",String,&prov)) != MIXFOK )
+                if ( (err=get_list_param_value("$STRINGTOCONVERT",String,&prov)) != MIXFOK )
                 {
                     PrintError(err);
                     exit (-1);
                 }
-                if ( (err=GetFNameParamValue("$LICENSEFILE",LicenseFileName,&prov)) != MIXFOK)
+                if ( (err=get_fname_param_value("$LICENSEFILE",LicenseFileName,&prov)) != MIXFOK)
                 {
                     PrintError(err);
                     exit (-1);
@@ -455,6 +458,6 @@ int main(int argc, char *argv[], char *envp[])
         }
     }
 
-    ResetParamList();
+    reset_param_list();
     exit (0);
 }

@@ -840,7 +840,7 @@ Error check_license (char *LicenseFileName, char *DecryptedString)
     /* Retrieve host name and host id and concatenate them in order to produce the Key */
     hostid = gethostid();
     gethostname(hostname,SHORTSTRINGMAXLEN);
-    sprintf (Key,"%s%#0x",hostname,(unsigned int) hostid);
+    sprintf (Key,"%s0x%08x",hostname,(unsigned int) hostid);
     keylen = strlen (Key);
 
     /* decrypt the string by means of bitwise exclusive OR between chars in the

@@ -2,7 +2,7 @@
  * -----------------------------------------                                      *
  * C/C++ Mixed Functions Library (libmixf)                                        *
  * -----------------------------------------                                      *
- * Copyright 2019-2021 Roberto Mameli                                             *
+ * Copyright 2019-2025 Roberto Mameli                                             *
  *                                                                                *
  * Licensed under the Apache License, Version 2.0 (the "License");                *
  * you may not use this file except in compliance with the License.               *
@@ -26,18 +26,18 @@
  *              and ip                                                            *
  *                                                                                *
  * NOTE WELL:   THIS EXAMPLE USES THE FOLLOWING libmixf FUNCTIONS:                *
- *              - CheckFileNameValidity()   // File and File System Handling      *
- *              - CheckMailValidity()       // String Handling                    *
- *              - CheckIPv4AddValidity()                                          *
- *              - CheckUrlValidity()                                              *
- *              - ResetParamList()          // Configuration Files Handling       *
- *              - AddMailParam()                                                  *
- *              - AddIPv4Param()                                                  *
- *              - AddUrlParam()                                                   *
- *              - ParseCfgParamFile()                                             *
- *              - GetMailParamValue()                                             *
- *              - GetIPv4ParamValue()                                             *
- *              - GetUrlParamValue()                                              *
+ *              - check_file_name_validity()  // File and File System Handling    *
+ *              - check_mail_validity()       // String Handling                  *
+ *              - check_ipv4_add_validity()                                       *
+ *              - check_url_validity()                                            *
+ *              - reset_param_list()          // Configuration Files Handling     *
+ *              - add_mail_param()                                                *
+ *              - add_ipv4_param()                                                *
+ *              - add_url_param()                                                 *
+ *              - parse_cfg_param_file()                                          *
+ *              - get_mail_param_value()                                          *
+ *              - get_ipv4_param_value()                                          *
+ *              - get_url_param_value()                                           *
  *                                                                                *
  *  ----------------------------------------------------------------------------  *
  *  DISCLAIMER                                                                    *
@@ -254,8 +254,11 @@ int PrintMenu (void)
  ***************************************/
 void WaitEnterKey (void)
 {
+    int c;
+
     printf ("\n\tPress the ENTER key to continue...\n");
-    system ("read");
+    while ((c = getchar()) != '\n' && c != EOF);
+    while (getchar() != '\n');
     return;
 }
 
@@ -273,21 +276,21 @@ int main(int argc, char *argv[], char *envp[])
     Error       err;
     EventList   *listofevents=NULL;
     uint16_t    line;
-    Boolean     prov;
+    bool     prov;
 
     /* Initialize parameters */
-    ResetParamList();
-    if ( (err=AddMailParam (EMAILPARAM,FALSE,"test@mail.com",UNDEFINED,MAILNOTPROV,MAILREDEF,MAILNOTVALID)) != MIXFOK)
+    reset_param_list();
+    if ( (err=add_mail_param (EMAILPARAM,false,"test@mail.com",UNDEFINED,MAILNOTPROV,MAILREDEF,MAILNOTVALID)) != MIXFOK)
     {
         PrintError (err);
         exit (-1);
     }
-    if ( (err=AddIPv4Param (IPV4PARAM,FALSE,"127.0.0.1",UNDEFINED,IPV4NOTPROV,IPV4REDEF,IPV4NOTVALID)) != MIXFOK)
+    if ( (err=add_ipv4_param (IPV4PARAM,false,"127.0.0.1",UNDEFINED,IPV4NOTPROV,IPV4REDEF,IPV4NOTVALID)) != MIXFOK)
     {
         PrintError (err);
         exit (-1);
     }
-    if ( (err=AddUrlParam (URLPARAM,FALSE,"https://127.0.0.1:8443",UNDEFINED,URLNOTPROV,URLREDEF,URLNOTVALID)) != MIXFOK)
+    if ( (err=add_url_param (URLPARAM,false,"https://127.0.0.1:8443",UNDEFINED,URLNOTPROV,URLREDEF,URLNOTVALID)) != MIXFOK)
     {
         PrintError (err);
         exit (-1);
@@ -303,7 +306,7 @@ int main(int argc, char *argv[], char *envp[])
                 system ("clear");
                 printf ("Please insert a valid e-mail: ");
                 scanf ("%s",String);
-                if (CheckMailValidity(String))
+                if (check_mail_validity(String))
                     printf ("OK, this is a valid e-mail...");
                 else
                     printf ("Mmmh, I asked you a valid email...");
@@ -317,7 +320,7 @@ int main(int argc, char *argv[], char *envp[])
                 system ("clear");
                 printf ("Please insert a valid IPv4 address (in the form a.b.c.d): ");
                 scanf ("%s",String);
-                if (CheckIPv4AddValidity(String, &ipaddr))
+                if (check_ipv4_add_validity(String, &ipaddr))
                     printf ("OK, this is a valid IPv4 address... (%#0x)",ipaddr);
                 else
                     printf ("Mmmh, I asked you a valid IPv4 address...");
@@ -329,7 +332,7 @@ int main(int argc, char *argv[], char *envp[])
                 system ("clear");
                 printf ("Please insert a valid URL: ");
                 scanf ("%s",String);
-                if (CheckUrlValidity(String))
+                if (check_url_validity(String))
                     printf ("OK, this is a valid URL...");
                 else
                     printf ("Mmmh, I asked you a valid URL...");
@@ -341,11 +344,11 @@ int main(int argc, char *argv[], char *envp[])
                 system ("clear");
                 printf ("Please insert configuration file name: ");
                 scanf ("%s",File);
-                if ( CheckFileNameValidity(File)!=MIXFOK )
+                if ( check_file_name_validity(File)!=MIXFOK )
                     printf ("This is not a valid File Name");
                 else
                 {
-                    if ( (err=ParseCfgParamFile(File,&line,&listofevents)) != MIXFOK)
+                    if ( (err=parse_cfg_param_file(File,&line,&listofevents)) != MIXFOK)
                     {
                         PrintError(err);
                         if ( (err==MIXFFORMATERROR) || (err==MIXFPARAMUNKNOWN) )
@@ -356,16 +359,16 @@ int main(int argc, char *argv[], char *envp[])
                         printf ("The configuration file was read successfully (total lines %d)\n",line);
                         PrintEventList (listofevents);
                         if (listofevents != NULL)
-                            ClearEventList(&listofevents);
-                        if ( (err=GetMailParamValue(EMAILPARAM,String,&prov)) != MIXFOK)
+                            clear_event_list(&listofevents);
+                        if ( (err=get_mail_param_value(EMAILPARAM,String,&prov)) != MIXFOK)
                             PrintError(err);
                         else
                             printf ("\n"EMAILPARAM": %s\n",String);
-                        if ( (err=GetIPv4ParamValue(IPV4PARAM,String,&prov)) != MIXFOK)
+                        if ( (err=get_ipv4_param_value(IPV4PARAM,String,&prov)) != MIXFOK)
                             PrintError(err);
                         else
                             printf ("\n"IPV4PARAM": %s\n",String);
-                        if ( (err=GetUrlParamValue(URLPARAM,String,&prov)) != MIXFOK)
+                        if ( (err=get_url_param_value(URLPARAM,String,&prov)) != MIXFOK)
                             PrintError(err);
                         else
                             printf ("\n"URLPARAM": %s\n",String);

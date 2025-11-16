@@ -18,7 +18,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
   - CODE_OF_CONDUCT.md
   - CONTRIBUTING.md
   - CLA.md
-- Added *.gitkeep* file into *./obj* directory to keep it in the directory structure on GitHub
+- Added *.gitkeep* file into sevaral directories (e.g. *./obj*) to keep them in the directory structure on GitHub
 ### Changed
 - The unique file *src/mixfApi.c* in previous releases has been split into 4 files for increased readability
 - All exposed funtions (i.e. those declared in *headers/mixf.h*) have been renamed due to a change in the name convention adopted (from *UpperCamelCase* to *snake_case*). For example, *InitParamList()* has been renamed in *init_param_list()*
@@ -30,12 +30,15 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 - in *include/mixfApi.h* type definitions for strings of various lengths have been slightly changed, to align their lengths to integer powers of 2
 - Several routines in which string parameters whose lengths is checked and possibly truncated have been updated, to reflect new limits (see previous point)
 - Changed README (content updated and format changed from plain text to markdown)
+- Updated all examples to reflect the changes above
 ### Deprecated
 ### Removed
 - The *Boolean* type previously defined and the corresponding macros TRUE* and *FALSE* have been removed (and substituted with *bool* type in *stdbool.h*)
 - Removed *RevHistory.txt* (its content has been moved in this file, i.e. *CHANGELOG.md*)
 - Deleted the *libmixf.pdf* guide in *./docs*. Its content has been updated and moved into the *README.md* and related files
 ### Fixed
+- Fixed bug in *check_license()*, that didn't work correctly when hostId was shorter than 8 chars
+- Fixed bug in *check_and_dump_ctr()*, that causes a segmentation fault when base and aggregate dump times starts again from the beginning of the dump times string
 ### Security
 
 

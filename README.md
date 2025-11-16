@@ -127,9 +127,9 @@ documntation in the ./docs subdirectory
 ----------------
 (5) KNOWN ISSUES
 ----------------
-(1) CheckUrlValidity()
+(1) check_url_validity()
 ----------------------
-- Function CheckUrlValidity() supports 255 characters as maximum URL length. Furthermore,
+- Function check_url_validity() supports 255 characters as maximum URL length. Furthermore,
   it does not support full URL verification. Remember that the general URL format is the
   following:
 

@@ -415,7 +415,7 @@ Error add_url_param  (char *, bool, char *, EventCode, EventCode, EventCode, Eve
    actually provisioned in the configuration file, while is false if it wasn't */
 Error get_num_param_value (char *, int *, bool *);
 
-/* get_lit_param_value()
+/* get_list_param_value()
    ---------------------
    This routine provides through the second argument the value of the literal parameter
    whose name is given by the first argument. It provides return code MIXFOK if the parameter
@@ -425,7 +425,7 @@ Error get_num_param_value (char *, int *, bool *);
    actually provisioned in the configuration file, while is false if it wasn't
    The string in which the parameter value is copied (second parameter) is not allocated
    by the routine, rather shall be allocated by the caller. */
-Error get_lit_param_value (char *, char * , bool *);
+Error get_list_param_value (char *, char * , bool *);
 
 /* get_fname_param_value()
    -----------------------
