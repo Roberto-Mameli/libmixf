@@ -1,3 +1,4 @@
 lib/*.a
 obj/*.o
-libmixf.*
+libmixf.a
+libmixf.so*
