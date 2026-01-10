@@ -2,7 +2,7 @@
  * -----------------------------------------                                *
  * C/C++ Mixed Functions Library (libmixf)                                  *
  * -----------------------------------------                                *
- * Copyright 2019-2025 Roberto Mameli                                       *
+ * Copyright 2019-2026 Roberto Mameli                                       *
  *                                                                          *
  * Licensed under the Apache License, Version 2.0 (the "License");          *
  * you may not use this file except in compliance with the License.         *
@@ -584,7 +584,8 @@ bool check_ipv4_add_validity (char *ipAddrStr, uint32_t *ipAddr)
     ShortString ip;
 
     /* Takes a local copy of ip address, to avoid affecting it */
-    strcpy (ip,ipAddrStr);
+    /* Copy is truncated to 32 characters, which are enough for IPv4 address */
+    strncpy (ip,ipAddrStr,SHORTSTRINGMAXLEN);
 
     p = ip;
 
@@ -613,6 +614,46 @@ bool check_ipv4_add_validity (char *ipAddrStr, uint32_t *ipAddr)
     *ipAddr = (n[0]<<24) | (n[1]<<16) | (n[2]<<8) | n[3];
 
     return (true);
+}
+
+
+/* check_fqdn_validity()
+   ---------------------
+   This function takes a string as input parameter and provides true
+   if it represents a hostname syntactically correct, false otherwise.
+   It is assumed that the input string contains up to 256 characters
+   otherwise it is considered not valid (there is no specific rule
+   that states so, but it seems a reasonable assumption in almost all
+   practical situations). */
+bool check_fqdn_validity (char *fqdn)
+{
+    /* Local Variables */
+    char         *p, *q;
+    int           len;
+
+    /* Check preliminarly string length */
+    if ( ((len=strlen(fqdn)) > LONGSTRINGMAXLEN) || (len<1) )
+        return (false);     /* the input string is empty or longer than 256 characters */
+
+    if ( (fqdn[0]=='.') || (fqdn[0]=='-') )
+        return (false);     /* the fqdn starts with "." or "-" */
+
+    if ( (fqdn[len-1]=='.') || (fqdn[len-1]=='-') )
+        return (false);     /* the fqdn ends with "." or "-" */
+
+    if ( strspn(fqdn,"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789.-")<len )
+        return (false);     /* only letters, digits and "." or "/" are allowed */
+
+    q=fqdn;
+    while ( (p=strchr(q,'.')) != NULL )
+    {
+        if ( (*(p-1)=='.') || (*(p+1)=='.') )
+            return (false); /* there are two consecutive "." in the fqdn */
+        q=p;
+    }
+
+    return (true);
+
 }
 
 

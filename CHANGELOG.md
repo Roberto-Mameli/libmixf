@@ -11,7 +11,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 ### Fixed
 ### Security
 
-## [3.0.0] - 2025-10
+## [3.0.0] - 2026-01
 ### Added
 - Added the following files (for better management of contributions):
   - CREDITS
@@ -19,6 +19,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
   - CONTRIBUTING.md
   - CLA.md
 - Added *.gitkeep* file into sevaral directories (e.g. *./obj*) to keep them in the directory structure on GitHub
+- Added a new function in the String Handling category to check FQDN validity (*check_fqdn_validity()*) 
 ### Changed
 - The unique file *src/mixfApi.c* in previous releases has been split into 4 files for increased readability
 - All exposed funtions (i.e. those declared in *headers/mixf.h*) have been renamed due to a change in the name convention adopted (from *UpperCamelCase* to *snake_case*). For example, *InitParamList()* has been renamed in *init_param_list()*
@@ -39,6 +40,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 ### Fixed
 - Fixed bug in *check_license()*, that didn't work correctly when hostId was shorter than 8 chars
 - Fixed bug in *check_and_dump_ctr()*, that causes a segmentation fault when base and aggregate dump times starts again from the beginning of the dump times string
+- Fixed bug in *check_ipv4_add_validity()*, that provides a segmentation fault when the innput string is longer than 32 characters
 ### Security
 
 

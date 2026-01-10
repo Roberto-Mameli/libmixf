@@ -2,7 +2,7 @@
  * -----------------------------------------                                *
  * C/C++ Mixed Functions Library (libmixf)                                  *
  * -----------------------------------------                                *
- * Copyright 2019-2025 Roberto Mameli                                       *
+ * Copyright 2019-2026 Roberto Mameli                                       *
  *                                                                          *
  * Licensed under the Apache License, Version 2.0 (the "License");          *
  * you may not use this file except in compliance with the License.         *
@@ -248,6 +248,16 @@ bool check_mail_validity (char *);
    string formatted as a.b.c.d, where a, b, c, d are integers between 0 and 255), false
    otherwise. If true the second parameter provides the IP addr converted into a uint32_t */
 bool check_ipv4_add_validity (char *, uint32_t *);
+
+/* check_fqdn_validity()
+   ---------------------
+   This function takes a string as input parameter and provides true
+   if it represents a fqdn syntactically correct, false otherwise.
+   It is assumed that the input string contains up to 256 characters
+   otherwise it is considered not valid (there is no specific rule
+   that states so, but it seems a reasonable assumption in almost all
+   practical situations). */
+bool check_fqdn_validity (char *);
 
 /* check_url_validity()
    --------------------
