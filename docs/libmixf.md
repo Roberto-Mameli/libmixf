@@ -96,21 +96,18 @@ The library can either be cloned from the GitHub repository or downloaded (eithe
 
 - git clone from GitHub:
 
-  > git clone https://github.com/Roberto-Mameli/libmixf.git
-  >
-  > cd libmixf
+      git clone https://github.com/Roberto-Mameli/libmixf.git
+      cd libmixf
 
 - download:
 
-  > tar -zxvf libmixf2.1.tar.gz
-  >
-  > cd libmixf2.1
+      tar -zxvf libmixf2.1.tar.gz
+      cd libmixf2.1
 
-  *or*
+  or:
 
-  > unzip libmixf-master.zip
-  >
-  > cd libmixf-master
+      unzip libmixf-master.zip
+      cd libmixf-master
 
 (this example assumes *libmixf2.1*, however it can be applied also to other versions by simply referring to the correct one).
 
@@ -143,7 +140,7 @@ This is obtained as follows:
 
 − include the *mixf.h* header file
 
-  > #include "mixf.h"
+    #include "mixf.h"
 
 − link the executable by including either the shared or the static library libmixf
 
@@ -152,13 +149,12 @@ To compile a generic example file (let's say **_example.c_** ), simply type:
 
 - for shared library linking:
 
-  > gcc -g -c -O2 -Wall -v –I/usr/local/include example.c
-  >
-  > gcc -g -o example example.c - lmixf
+      gcc -g -c -O2 -Wall -v –I/usr/local/include example.c
+      gcc -g -o example example.c - lmixf
 
 - for static linking:
 
-  > gcc -static example.c - I/usr/local/include -L. -lmixf - o example
+      gcc -static example.c - I/usr/local/include -L. -lmixf - o example
 
 
 In the previous command **_- L._** means that the **_libmixf.a_** file is available in the same directory of the source code **_example.c_** ; if this is not the case just replace the dot after **_L_** with the path to the library file.
@@ -188,14 +184,11 @@ family.
 
 ### New libmixf macros and data types
 
-The following types and macros are defined in header file **_mixf.h_**. Those definition shall not be changed or overwritten by the source code:
+The following type and macros are defined in header file **_mixf.h_**. Those definition shall not be changed or overwritten by the source code:
 
     typedef uint8_t Error;
-    typedef uint8_t EventCode;
 
-The first type definition is used to define the return type of most of the **_libmixf_** library functions, while the second one defines the type for Event Codes managed through the Log Handling functions.
-
-Allowed values for the **_Error_** type are specified by the following macro definitions:
+This type definition is used to define the return type of most of the **_libmixf_** library functions. Allowed values for the **_Error_** type are specified by the following macro definitions:
 
 
     #define MIXFOK 0
@@ -213,7 +206,7 @@ The above definitions apply to all the **_libmixf_** functions. For specific sub
 ## File and File System Handling
 
 ### Description
-This is a set of functions that provide some facilities for file handling. This function family consists of 4 library calls:
+This is a set of functions that provide some facilities for file handling. This family consists of 4 library calls:
 
 - check_file_name_validity()
 - retrieve_path()
@@ -221,7 +214,7 @@ This is a set of functions that provide some facilities for file handling. This 
 - clear_input_file_list()
 
 ### New libmixf macros and data types
-The following macro provides the maximum allowed length for a filename. It takes its value from the platform dependent macro _FILENAME_MAX_ , which is defined in _stdio.h_ :
+The following macro provides the maximum allowed length for a filename. It takes its value from the platform dependent macro _FILENAME_MAX_, which is defined in _stdio.h_:
 
     #define MAXFILENAMELEN FILENAME_MAX
 

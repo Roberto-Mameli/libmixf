@@ -40,7 +40,7 @@
  *              - add_literal_param()                                             *
  *              - add_filename_param()                                            *
  *              - parse_cfg_param_file()                                          *
- *              - get_list_param_value()                                          *
+ *              - get_lit_param_value()                                           *
  *              - get_fname_param_value()                                         *
  *              - clear_event_list()                                              *
  *              - create_license()            // License Handling                 *
@@ -340,7 +340,7 @@ int main(int argc, char *argv[], char *envp[])
     }
 
     /* Get the value of parameters */
-    if ( (err=get_list_param_value("$STRINGTOCONVERT",String,&prov)) != MIXFOK )
+    if ( (err=get_lit_param_value("$STRINGTOCONVERT",String,&prov)) != MIXFOK )
     {
         PrintError(err);
         exit (-1);
@@ -393,7 +393,7 @@ int main(int argc, char *argv[], char *envp[])
                     WaitEnterKey();
                     break;
                 }
-                get_list_param_value("$STRINGTOCONVERT",String,&prov);
+                get_lit_param_value("$STRINGTOCONVERT",String,&prov);
                 printf ("Decrypted string is %s\n",Decrypted);
                 if (strcmp (Decrypted,String))
                     printf ("License check failed\n");
@@ -429,7 +429,7 @@ int main(int argc, char *argv[], char *envp[])
                 }
 
                 /* Get the value of parameters */
-                if ( (err=get_list_param_value("$STRINGTOCONVERT",String,&prov)) != MIXFOK )
+                if ( (err=get_lit_param_value("$STRINGTOCONVERT",String,&prov)) != MIXFOK )
                 {
                     PrintError(err);
                     exit (-1);

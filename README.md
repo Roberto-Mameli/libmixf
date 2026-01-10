@@ -32,21 +32,18 @@ The library can either be cloned from the GitHub repository or downloaded (eithe
 
 - git clone from GitHub:
 
-  > git clone https://github.com/Roberto-Mameli/libmixf.git
-  >
-  > cd libmixf
+      git clone https://github.com/Roberto-Mameli/libmixf.git
+      cd libmixf
 
 - download:
 
-  > tar -zxvf libmixf2.1.tar.gz
-  >
-  > cd libmixf2.1
+      tar -zxvf libmixf2.1.tar.gz
+      cd libmixf2.1
 
-  *or*
+  or:
 
-  > unzip libmixf-master.zip
-  >
-  > cd libmixf-master
+      unzip libmixf-master.zip
+      cd libmixf-master
 
 (this example assumes *libmixf2.1*, however it can be applied also to other versions by simply referring to the correct one).
 
@@ -79,7 +76,7 @@ This is obtained as follows:
 
 − include the *mixf.h* header file
 
-  > #include "mixf.h"
+    #include "mixf.h"
 
 − link the executable by including either the shared or the static library libmixf
 
@@ -88,13 +85,12 @@ To compile a generic example file (let's say **_example.c_** ), simply type:
 
 - for shared library linking:
 
-  > gcc -g -c -O2 -Wall -v –I/usr/local/include example.c
-  >
-  > gcc -g -o example example.c - lmixf
+      gcc -g -c -O2 -Wall -v –I/usr/local/include example.c
+      gcc -g -o example example.c - lmixf
 
 - for static linking:
 
-  > gcc -static example.c - I/usr/local/include -L. -lmixf - o example
+      gcc -static example.c - I/usr/local/include -L. -lmixf - o example
 
 
 In the previous command **_- L._** means that the **_libmixf.a_** file is available in the same directory of the source code **_example.c_** ; if this is not the case just replace the dot after **_L_** with the path to the library file.
@@ -114,13 +110,13 @@ Function *check_url_validity()* supports 256 characters as maximum URL length. F
 Currently there are some minor limitations:
 - URL authentication is not recognized, i.e. if the URL contains:
 
-  > [username[:password]@]
+    [username[:password]@]
   
   it is not considered a valid URL. This is not a great problem, given that basic URL authentication is almost never used since it lacks in terms of security (user and password are contained in clear text).
 
 - [?querystring] and [#fragment] are not completely verified (both should be formatted as concatenation of parameter/value pairs, i.e.
   
-  > param1=value1&param2=value2...
+    param1=value1&param2=value2...
 
   This is not controlled, the routine just checks that those sections contain only allowed characters
 
