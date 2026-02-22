@@ -23,7 +23,7 @@
  *              libmixf functions related to lock handling and counters           *
  *              handling.                                                         *
  *                                                                                *
- * NOTE WELL:   THIS EXAMPLE USES THE FOLLOWING libmixf FUNCTIONS:                *
+ * NOTE WELL:   THIS EXAMPLE USES THE FOLLOWING libmixf functions:                *
  *              - check_lock_present()     // Lock handling functions             *
  *              - set_lock()                                                      *
  *              - reset_lock()                                                    *

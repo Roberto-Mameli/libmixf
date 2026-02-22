@@ -25,7 +25,7 @@
  *              letters and digits (0-9)                                          *
  *              After that, it creates 20 random UUID v4 identifiers              *
  *                                                                                *
- * NOTE WELL:   THIS EXAMPLE USES THE FOLLOWING libmixf FUNCTIONS:                *
+ * NOTE WELL:   THIS EXAMPLE USES THE FOLLOWING libmixf functions:                *
  *              - generate_token()  // String Handling                            *
  *                                                                                *
  *  ----------------------------------------------------------------------------  *

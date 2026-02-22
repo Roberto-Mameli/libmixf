@@ -25,7 +25,7 @@
  *              parameters in the file will be named respectively: email, url     *
  *              and ip                                                            *
  *                                                                                *
- * NOTE WELL:   THIS EXAMPLE USES THE FOLLOWING libmixf FUNCTIONS:                *
+ * NOTE WELL:   THIS EXAMPLE USES THE FOLLOWING libmixf functions:                *
  *              - check_file_name_validity()  // File and File System Handling    *
  *              - check_mail_validity()       // String Handling                  *
  *              - check_ipv4_add_validity()                                       *

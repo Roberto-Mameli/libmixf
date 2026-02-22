@@ -33,7 +33,7 @@
  *              The second allows to read $LICENSEFILE, decrypt it and            *
  *              check that the content is equal to $STRINGTOCONVERT.              *
  *                                                                                *
- * NOTE WELL:   THIS EXAMPLE USES THE FOLLOWING libmixf FUNCTIONS:                *
+ * NOTE WELL:   THIS EXAMPLE USES THE FOLLOWING libmixf functions:                *
  *              - check_file_name_validity()  // File and File System Handling    *
  *              - reset_param_list()          // Configuration Files handling     *
  *              - init_param_list()                                               *

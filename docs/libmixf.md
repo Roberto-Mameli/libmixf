@@ -138,11 +138,11 @@ After compiling and installing the *libmixf* library (see previous section), it 
 
 This is obtained as follows:
 
-− include the *mixf.h* header file
+- include the *mixf.h* header file
 
-    #include "mixf.h"
+      #include "mixf.h"
 
-− link the executable by including either the shared or the static library libmixf
+- link the executable by including either the shared or the static library libmixf
 
 
 To compile a generic example file (let's say **_example.c_** ), simply type:

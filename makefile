@@ -46,40 +46,120 @@
 #                                                                                  #
 ####################################################################################
 
-MIXFLIB = libmixf
-MIXFSOURCES = ./src/mixfCommon.c ./src/mixfLogs.c ./src/mixfConf.c ./src/mixfCounters.c
-MIXFOBJS = ./obj/mixfCommon.o ./obj/mixfLogs.o ./obj/mixfConf.o ./obj/mixfCounters.o
+# ---- Toolchain ----
+CC         ?= gcc
+AR         ?= ar
+RANLIB     ?= ranlib
+RM         ?= rm -f
+INSTALL    ?= install
 
-LIBS = -lpthread
-INCLUDE = -I. -I./include -I./headers
-SOLIB = /usr/local/lib
-LIB = ./lib
-CFLAGS = -c -fpic -Wall -v
+# ---- Project ----
+NAME       := mixf
+VERSION    := 3.0.0
 
-CC = gcc
-RM = rm
-AR = ar
-CP = cp
-MV = mv
+# ---- Directories ----
+SRCDIR     := src
+HDRDIR     := headers
+INCDIR     := include
+OBJDIR     := obj
+LIBDIR     := lib
+EXAMPLEDIR := examples
 
-obj/%.o: src/%.c
-	$(CC) $(CFLAGS) $(INCLUDE) -o $@ $<
+PREFIX     ?= /usr/local
+SYS_LIBDIR := $(PREFIX)/lib
+SYS_INCDIR := $(PREFIX)/include
 
-all: $(MIXFOBJS)
-	$(CC) -shared -Wl,-soname,$(MIXFLIB).so.3 -o $(MIXFLIB).so.3.0  $(MIXFOBJS) -lc
-	$(AR) rcs $(MIXFLIB).a $(MIXFOBJS)
+# ---- Sources ----
+SRC        := $(wildcard $(SRCDIR)/*.c)
+OBJ        := $(patsubst $(SRCDIR)/%.c,$(OBJDIR)/%.o,$(SRC))
+DEP        := $(OBJ:.o=.d)
+HDR        := $(HDRDIR)/mixf.h
+EXAMPLES   := Example1 Example2 Example3 Example4
 
-install:
-	$(MV) $(MIXFLIB).a $(LIB)
-	chown root:root $(LIB)/$(MIXFLIB).a
-	chmod 777 $(LIB)/$(MIXFLIB).a
-	$(MV) $(MIXFLIB).so.3.0 $(SOLIB)
-	ln -sf $(SOLIB)/$(MIXFLIB).so.3 $(SOLIB)/$(MIXFLIB).so
-	chown root:root $(SOLIB)/$(MIXFLIB).so.3.0
-	chmod 777 $(SOLIB)/$(MIXFLIB).so.3.0
-	$(CP) ./headers/*.h /usr/local/include
-	chown root:root /usr/local/include/*.h
-	ldconfig -n $(SOLIB)
+# ---- Libraries ----
+STATIC_LIB := $(LIBDIR)/lib$(NAME).a
+SHARED_LIB := $(LIBDIR)/lib$(NAME).so.$(VERSION)
+SONAME     := lib$(NAME).so
 
+# ---- Flags ----
+#CFLAGS     += -v -O2 -Wall -Wextra -fPIC -pthread -MMD -MP
+CFLAGS     += -v -O2 -Wall -fPIC -pthread -MMD -MP
+CPPFLAGS   += -I$(INCDIR) -I$(HDRDIR)
+
+LDFLAGS    += -pthread
+SOFLAGS    := -shared -Wl,-soname,$(SONAME)
+
+
+# ---- Targets ----
+
+.PHONY: all clean install uninstall dirs staticexamples dynamicexamples cleanexamples
+
+all: dirs $(STATIC_LIB) $(SHARED_LIB)
+
+# ---- Create directories ----
+dirs:
+	mkdir -p $(OBJDIR)
+	mkdir -p $(LIBDIR)
+
+# ---- Pattern rule (.c -> .o) ----
+$(OBJDIR)/%.o: $(SRCDIR)/%.c
+	$(CC) $(CPPFLAGS) $(CFLAGS) -c $< -o $@
+
+# ---- Static library ----
+$(STATIC_LIB): $(OBJ)
+	$(AR) rcs $@ $^
+	$(RANLIB) $@
+
+# ---- Shared library ----
+$(SHARED_LIB): $(OBJ)
+	$(CC) $(SOFLAGS) $(OBJ) $(LDFLAGS) -o $@
+
+# ---- Install ----
+install: all
+	$(INSTALL) -d $(DESTDIR)$(SYS_LIBDIR)
+	$(INSTALL) -d $(DESTDIR)$(SYS_INCDIR)
+	$(INSTALL) -m 644 $(STATIC_LIB) $(DESTDIR)$(SYS_LIBDIR)
+	$(INSTALL) -m 755 $(SHARED_LIB) $(DESTDIR)$(SYS_LIBDIR)
+	ln -sf $(notdir $(SHARED_LIB)) $(DESTDIR)$(SYS_LIBDIR)/$(SONAME)
+	$(INSTALL) -m 644 $(HDR) $(DESTDIR)$(SYS_INCDIR)
+
+# ---- Uninstall ----
+uninstall:
+	$(RM) $(DESTDIR)$(SYS_LIBDIR)/lib$(NAME).a || true
+	$(RM) $(DESTDIR)$(SYS_LIBDIR)/$(SONAME)* || true
+	$(RM) $(DESTDIR)$(SYS_INCDIR)/mixf.h || true
+
+# ---- Examples with static linking ----
+staticexamples: $(LIB_STATIC)
+	@mkdir -p $(EXAMPLEDIR)/bin
+	@for e in $(EXAMPLES); do \
+		$(CC) $(CFLAGS) -Iheaders \
+		    $(EXAMPLEDIR)/src/$$e.c \
+		    lib/libmixf.a \
+		    -o $(EXAMPLEDIR)/bin/$$e-static ; \
+	done
+
+# ---- Examples with dynamic linking ----
+dynamicexamples: $(SHARED_LIB)
+	@mkdir -p $(EXAMPLEDIR)/bin
+	@for e in $(EXAMPLES); do \
+		$(CC) $(CFLAGS) -Iheaders \
+		    $(EXAMPLEDIR)/src/$$e.c \
+		    -Llib -lmixf \
+		    -Wl,-rpath,'$$ORIGIN/../../lib' \
+		    -o $(EXAMPLEDIR)/bin/$$e-dynamic ; \
+	done
+
+# ---- Clean ----
 clean:
-	$(RM) $(MIXFOBJS) $(LIB)/$(MIXFLIB).* $(SOLIB)/$(MIXFLIB).* $(MIXFLIB).*
+	$(RM) $(OBJ) || true
+	$(RM) $(DEP) || true
+	$(RM) $(STATIC_LIB) || true
+	$(RM) $(SHARED_LIB) || true
+	$(RM) $(SONAME) || true
+
+cleanexamples:
+	$(RM) $(EXAMPLEDIR)/bin/*
+
+# ---- Include auto-deps ----
+-include $(DEP)
