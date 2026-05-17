@@ -11,7 +11,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 ### Fixed
 ### Security
 
-## [3.0.0] - 2026-01
+## [3.0.0] - 2026-05
 ### Added
 - Added the following files (for better management of contributions):
   - CREDITS
@@ -40,7 +40,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 ### Fixed
 - Fixed bug in *check_license()*, that didn't work correctly when hostId was shorter than 8 chars
 - Fixed bug in *check_and_dump_ctr()*, that causes a segmentation fault when base and aggregate dump times starts again from the beginning of the dump times string
-- Fixed bug in *check_ipv4_add_validity()*, that provides a segmentation fault when the innput string is longer than 32 characters
+- Fixed bug in *check_ipv4_add_validity()*, that provides a segmentation fault when the input string is longer than 32 characters
 ### Security
 
 

@@ -20,7 +20,7 @@
 - Counters Handling
 
 They are written as general purpose functions, in order to be reused whenever needed.
-The latest library version can be downloaded either from author's [personal web site](https://www.roberto-mameli.it/software) or from [GitHub repository](https://github.com/Roberto-Mameli/libmixf.git).
+The latest library version can be downloaded from author's [GitHub repository](https://github.com/Roberto-Mameli/libmixf.git).
 
 
 # How to compile and install the library
@@ -28,24 +28,17 @@ The library has been developed in Linux environment (RedHat, CentOS, Ubuntu), bu
 
 Be aware that this library does not come with an automatically generated makefile (cmake or similar). It contains a manually written makefile, composed by a few lines, that has been successfully tested on RedHat and Debian distributions (RedHat, Centos, Ubuntu, etc.), and that can be easily adapted to other Linux based operating systems.
 
-The library can either be cloned from the GitHub repository or downloaded (either from GitHub or from the web site).
+The library can either be cloned or downloaded from the GitHub repository:
 
 - git clone from GitHub:
 
       git clone https://github.com/Roberto-Mameli/libmixf.git
       cd libmixf
 
-- download:
-
-      tar -zxvf libmixf2.1.tar.gz
-      cd libmixf2.1
-
-  or:
+- or download from GitHub, then:
 
       unzip libmixf-master.zip
       cd libmixf-master
-
-(this example assumes *libmixf2.1*, however it can be applied also to other versions by simply referring to the correct one).
 
 After that, type the following commands:
 
