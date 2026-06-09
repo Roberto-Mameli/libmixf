@@ -96,8 +96,8 @@ static bool             BaseCtrActive = false,                /* Flag used to un
                         AggrCtrActive = false;                /* Flag used to understand whether the aggr ctr file is open or not */
 static FILE             *BaseCtr_fd = NULL;                   /* File descriptor for base scalar counters */
 static FILE             *AggrCtr_fd = NULL;                   /* File descriptor for aggregated scalar counters */
-static pthread_mutex_t  BaseMutex;                            /* Mutex used to handle cuncurrent access to Base Counter file */
-static pthread_mutex_t  AggrMutex;                            /* Mutex used to handle cuncurrent access to Aggr Counter file */
+static pthread_mutex_t  BaseMutex = PTHREAD_MUTEX_INITIALIZER;/* Mutex used to handle cuncurrent access to Base Counter file */
+static pthread_mutex_t  AggrMutex = PTHREAD_MUTEX_INITIALIZER;/* Mutex used to handle cuncurrent access to Aggr Counter file */
 
 
 /*******************************
@@ -1083,10 +1083,6 @@ Error start_counters(void)
     if ( (BaseCtrActive==true) || (BaseCtrDir[0]=='\0') )   /* Either counters already started or define_base_dump() not called */
         return (MIXFKO);
 
-    /* Initialize global locks */
-    pthread_mutex_init(&BaseMutex, NULL);
-    pthread_mutex_init(&AggrMutex, NULL);
-
     /* Retrieve current time stamp according to defined format */
     retrieve_time_date(TimeStamp, BaseCtrTimeStampFormat);
 
@@ -1285,10 +1281,6 @@ Error stop_counters(void)
     /* Release Locks */
     pthread_mutex_unlock(&AggrMutex);
     pthread_mutex_unlock(&BaseMutex);
-
-    /* and finally destroy them */
-    pthread_mutex_destroy(&AggrMutex);
-    pthread_mutex_destroy(&BaseMutex);
 
     return (MIXFOK);
 

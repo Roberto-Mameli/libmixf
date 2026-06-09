@@ -88,7 +88,7 @@ static EventInfo        Events[EVENTARRAYSIZE];               /* Array of events
 static uint8_t          numevents=0,                          /* Number of registered events */
                         numlevels=1,                          /* Number of log levels (1 is the default if not initialized) */
                         LogLevel=0;                           /* Log level, local to the library (0 is the default if not initialized) */
-static pthread_mutex_t  LogMutex;                             /* Mutex used to handle cuncurrent access to log file (in case of multiple threads) */
+static pthread_mutex_t  LogMutex = PTHREAD_MUTEX_INITIALIZER; /* Mutex used to handle cuncurrent access to log file (in case of multiple threads) */
 
 
 /*******************************
@@ -127,7 +127,7 @@ static Error CloseReopenLog (void)
     retrieve_time_date(LogOpenDate,"%d%m%Y");
 
     /* Evaluate log file name */
-    if ( (LogFileTimeStampFormat != NULL) && (LogFileTimeStampFormat[0] != '\0') )
+    if ( LogFileTimeStampFormat[0] != '\0' )
     {
         retrieve_time_date(TimeStamp,LogFileTimeStampFormat);
         sprintf (LogFileName,"%s_%s.log",LogFileBaseName,TimeStamp);
@@ -354,8 +354,6 @@ Error open_log (char *BaseName, char *format, bool RotateDaily)
     LongString  LogFileName;
     ShortString TimeStamp;
 
-
-    pthread_mutex_init(&LogMutex, NULL);
     pthread_mutex_lock(&LogMutex);
 
     if (LogOpenFlag)    /* Already open */
@@ -411,11 +409,10 @@ void close_log (void)
 {
     /* Close log and exit */
     pthread_mutex_lock(&LogMutex);
-    fclose (Log_fd);
+    if (LogOpenFlag && (Log_fd!=NULL) )
+        fclose (Log_fd);
     LogOpenFlag = false;
     pthread_mutex_unlock(&LogMutex);
-
-    pthread_mutex_destroy (&LogMutex);
 
     return;
 }
