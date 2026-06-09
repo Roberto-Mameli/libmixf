@@ -741,8 +741,9 @@ bool check_url_validity (char * url)
         len = strlen(q);    /* length of the host */
         if ( (len==0) || (q[0]=='.') || (q[len-1]=='.') )
             return (false);     /* The host is empty, or it begins or ends with a dot -> Not valid */
-        if ( (strchr(q,'.')) == NULL)
-            return (false);     /* No . in the host -> Not valid */
+        /* The following lines are commented because http://localhost or similar URLs are valid */
+      //if ( (strchr(q,'.')) == NULL)
+      //    return (false);     /* No . in the host -> Not valid */
         for (s=q; *s!='\0'; s++)
         {
             if ( strchr("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_-.",*s) == NULL)
