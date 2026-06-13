@@ -470,8 +470,24 @@ Error define_vector_ctr(uint16_t ctrId, uint16_t ctrInst, uint8_t ctrType, uint3
     vectorCtr[ctrId].Type = ctrType;
     vectorCtr[ctrId].NumInstances = ctrInst;
     vectorCtr[ctrId].BaseVal = (uint32_t*)calloc((size_t)ctrInst, (size_t) sizeof(uint32_t));
+    if (vectorCtr[ctrId].BaseVal == NULL)
+        return (MIXFKO);
     vectorCtr[ctrId].AggrVal = (uint32_t*)calloc((size_t)ctrInst, (size_t) sizeof(uint32_t));
+    if (vectorCtr[ctrId].AggrVal == NULL)
+    {
+        free(vectorCtr[ctrId].BaseVal);
+        vectorCtr[ctrId].BaseVal = NULL;
+        return (MIXFKO);
+    }
     vectorCtr[ctrId].InstIdName = (MicroString *)calloc((size_t)ctrInst, sizeof(MicroString));
+    if (vectorCtr[ctrId].InstIdName == NULL)
+    {
+        free(vectorCtr[ctrId].BaseVal);
+        free(vectorCtr[ctrId].AggrVal);
+        vectorCtr[ctrId].BaseVal = NULL;
+        vectorCtr[ctrId].AggrVal = NULL;
+        return (MIXFKO);
+    }
 
     for (i = 0; i < ctrInst; i++)
     {

@@ -249,7 +249,7 @@ Error define_num_events (uint8_t maxevents)
  * event. This string may contain up to 3 placeholders defined as "%1", "%2" and
  * "%3", which will be used to identify the position within the string of up
  * to 3 parameters (see register_event() below).
- * If the function is called multiple times with the same event code, each invoation
+ * If the function is called multiple times with the same event code, each invocation
  * overwrites previous data (only the last definition applies).
  * This function provides MIXFOK in case of success, MIXFOVFL if the first or the second
  * parameter are out of allowed ranges, MIXFFORMATERROR if the string does not respect
@@ -270,6 +270,8 @@ Error define_event (EventCode event, uint8_t level, char * descr)
         return (MIXFOVFL);
 
     /* Look for parameters placeholders in the description (i.e. "%1", "%2", "%3") */
+    if (descr == NULL || strlen(descr) > EXTENDEDSTRINGMAXLEN)  /* Description is NULL or too long */
+        return (MIXFFORMATERROR);
     strcpy (EvnDescr,descr);
     p = EvnDescr;
     params[0] = strstr(p,"%1");
@@ -362,6 +364,12 @@ Error open_log (char *BaseName, char *format, bool RotateDaily)
         return (MIXFKO);
     }
 
+    if (BaseName == NULL || strlen(BaseName) > MEDIUMSTRINGMAXLEN)
+    {
+        pthread_mutex_unlock(&LogMutex);
+        return (MIXFFORMATERROR);
+    }
+
     if (check_file_name_validity(BaseName) != MIXFOK)
     {
         pthread_mutex_unlock(&LogMutex);
@@ -370,10 +378,20 @@ Error open_log (char *BaseName, char *format, bool RotateDaily)
 
     LogOpenRotate = RotateDaily;                /* keeps the log open rotation flag into a local variable for future reference */
     strcpy (LogFileBaseName, BaseName);         /* keeps the base name into a local variable for future reference */
-    if (format != NULL)                         /* keeps the time stamp format into a local variable for future reference */
-        strcpy (LogFileTimeStampFormat, format);
+    
+    if (format != NULL)
+    {
+        if (strlen(format) > MICROSTRINGMAXLEN)
+        {
+            pthread_mutex_unlock(&LogMutex);
+            return (MIXFFORMATERROR);
+        }
+        strcpy(LogFileTimeStampFormat, format); /* keeps the time stamp format into a local variable for future reference */
+    }
     else
+    {
         LogFileTimeStampFormat[0] = '\0';
+    }
 
     /* Evaluates and keeps the date of log opening in ddmmyyyy format */
     /* This is stored for Log Rotation */
@@ -383,10 +401,20 @@ Error open_log (char *BaseName, char *format, bool RotateDaily)
     if ( (format != NULL) && (format[0] != '\0') )
     {
         retrieve_time_date(TimeStamp,format);
-        sprintf (LogFileName,"%s_%s.log",LogFileBaseName,TimeStamp);
+        if (snprintf(LogFileName, sizeof(LogFileName), "%s_%s.log", LogFileBaseName, TimeStamp) >= sizeof(LogFileName))
+        {
+            pthread_mutex_unlock(&LogMutex);
+            return (MIXFFORMATERROR);
+        }
     }
     else
-        sprintf (LogFileName,"%s.log",LogFileBaseName);
+    {
+        if (snprintf(LogFileName, sizeof(LogFileName), "%s.log", LogFileBaseName) >= sizeof(LogFileName))
+        {
+            pthread_mutex_unlock(&LogMutex);
+            return (MIXFFORMATERROR);
+        }
+    }
 
     /* Open Log File in append mode */
     if ( (Log_fd=fopen(LogFileName,"a")) == NULL)
