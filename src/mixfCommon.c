@@ -925,7 +925,7 @@ Error check_license (char *LicenseFileName, char *DecryptedString)
     /* Retrieve host name and host id and concatenate them in order to produce the Key */
     hostid = gethostid();
     gethostname(hostname,SHORTSTRINGMAXLEN);
-    sprintf (Key,"%s0x%08x",hostname,(unsigned int) hostid);
+    snprintf (Key,MEDIUMSTRINGMAXLEN,"%s0x%08x",hostname,(unsigned int) hostid);
     keylen = strlen (Key);
 
     /* decrypt the string by means of bitwise exclusive OR between chars in the
@@ -979,7 +979,7 @@ Error create_license (char *String, char *HostName, char *HostId)
                 }
                 return (MIXFKO);
             }
-            sprintf (Key,"%s0x%s",HostName,HostId);
+            snprintf (Key,MEDIUMSTRINGMAXLEN,"%s0x%s",HostName,HostId);
             break;
         }
         case 10:
@@ -1003,7 +1003,7 @@ Error create_license (char *String, char *HostName, char *HostId)
                 return (MIXFKO);
             }
             //p = HostId+2;
-            sprintf (Key,"%s%s",HostName,HostId);
+            snprintf (Key,MEDIUMSTRINGMAXLEN,"%s%s",HostName,HostId);
             break;
         }
         default:

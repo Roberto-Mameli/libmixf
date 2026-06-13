@@ -90,12 +90,12 @@ static MicroString      BaseCtrTimeStampFormat = "%d%m%Y",    /* String containi
                         AggrCtrTimeStampFormat = "%d%m%Y",    /* String containing aggr dump time stamp format (second parameter of define_aggr_dump) */
                         BaseDumpOpenDate = "",                /* Date when the current base ctr file was opened, local to the library */
                         AggrDumpOpenDate = "";                /* Date when the current aggr ctr file was opened, local to the library */
-char                    *BaseNextDump = NULL,                 /* Pointer within BaseDumpTimes to the next dump time */
-                        *AggrNextDump = NULL;                 /* Pointer within AggrDumpTimes to the next dump time */
-static bool             BaseCtrActive = false,                /* Flag used to understand whether the base ctr file is open or not */
-                        AggrCtrActive = false;                /* Flag used to understand whether the aggr ctr file is open or not */
-static FILE             *BaseCtr_fd = NULL;                   /* File descriptor for base scalar counters */
-static FILE             *AggrCtr_fd = NULL;                   /* File descriptor for aggregated scalar counters */
+char                   *BaseNextDump = NULL,                  /* Pointer within BaseDumpTimes to the next dump time */
+                       *AggrNextDump = NULL;                  /* Pointer within AggrDumpTimes to the next dump time */
+static bool             BaseCtrActive = false,                /* Flag used to understand whether the base ctr file is open or not (not mutex protected) */
+                        AggrCtrActive = false;                /* Flag used to understand whether the aggr ctr file is open or not (not mutex protected) */
+static FILE            *BaseCtr_fd = NULL;                    /* File descriptor for base scalar counters */
+static FILE            *AggrCtr_fd = NULL;                    /* File descriptor for aggregated scalar counters */
 static pthread_mutex_t  BaseMutex = PTHREAD_MUTEX_INITIALIZER;/* Mutex used to handle cuncurrent access to Base Counter file */
 static pthread_mutex_t  AggrMutex = PTHREAD_MUTEX_INITIALIZER;/* Mutex used to handle cuncurrent access to Aggr Counter file */
 
@@ -443,10 +443,12 @@ Error define_vector_ctr(uint16_t ctrId, uint16_t ctrInst, uint8_t ctrType, uint3
     if ( (ctrId >= numVectorCtr) || (ctrInst < 1) )
         return (MIXFKO);
 
-    cum = cumVectorInst + ctrInst;
-
-    if (cum > MAXVECTORCTRINST)
+    /* Check that the cumulative number of instances of Vector Counters up to */
+    /* function call does not exceed 65536 (done before to avoid counter wrap) */
+    if (cumVectorInst > MAXVECTORCTRINST - ctrInst)
         return (MIXFOVFL);
+
+    cum = cumVectorInst + ctrInst;
 
     if ((ctrType != PEGCTR) && (ctrType != ROLLERCTR))
         return (MIXFKO);
@@ -1095,6 +1097,7 @@ Error start_counters(void)
     ShortString TimeStamp;
     struct stat FileStat;
     int         i,j;
+    bool        nameTooLong = false;
 
     if ( (BaseCtrActive==true) || (BaseCtrDir[0]=='\0') )   /* Either counters already started or define_base_dump() not called */
         return (MIXFKO);
@@ -1105,14 +1108,18 @@ Error start_counters(void)
     /* Open first the single scalar counter base file */
     /* File is open in append mode, in case that it is initially empty */
     /* it prints first an header row containing all scalar counters name */
-    sprintf(DumpFile, "%sscalar_%s.csv", BaseCtrDir, TimeStamp);
+    nameTooLong = (snprintf(DumpFile, sizeof(DumpFile), "%sscalar_%s.csv", BaseCtrDir, TimeStamp) >= sizeof(DumpFile));
     pthread_mutex_lock(&BaseMutex);
-    if ((BaseCtr_fd=fopen(DumpFile,"a")) == NULL)
+    if (nameTooLong || (BaseCtr_fd=fopen(DumpFile,"a")) == NULL)
     {
         pthread_mutex_unlock(&BaseMutex);
         return (MIXFNOACCESS);
     }
-    stat(DumpFile, &FileStat);
+    if (stat(DumpFile, &FileStat) != 0)
+    {
+        pthread_mutex_unlock(&BaseMutex);
+        return (MIXFNOACCESS);
+    }
     if (FileStat.st_size == 0)
     {
         fprintf(BaseCtr_fd, "Date,Time,");
@@ -1126,8 +1133,8 @@ Error start_counters(void)
     /* it prints first an header row containing all scalar counters name */
     for (i = 0; i<numVectorCtr; i++)
     {
-        sprintf(DumpFile, "%svector_%d_%s.csv", BaseCtrDir, i, TimeStamp);
-        if ((vectorCtr[i].BaseCtr_fd = fopen(DumpFile, "a")) == NULL)
+        nameTooLong = (snprintf(DumpFile, sizeof(DumpFile), "%svector_%d_%s.csv", BaseCtrDir, i, TimeStamp) >= sizeof(DumpFile));
+        if (nameTooLong || (vectorCtr[i].BaseCtr_fd = fopen(DumpFile, "a")) == NULL)
         {   /* Not able to open the i-th vector base file, close all files already open and exit with MIXFNOACCESS */
             for (j = i - 1; j >= 0; j--)
                 fclose(vectorCtr[j].BaseCtr_fd);
@@ -1135,7 +1142,11 @@ Error start_counters(void)
             pthread_mutex_unlock(&BaseMutex);
             return (MIXFNOACCESS);
         }   /* if ((vectorCtr[i].AggrCtr_fd ... */
-        stat(DumpFile, &FileStat);
+        if (stat(DumpFile, &FileStat) != 0)
+        {
+            pthread_mutex_unlock(&BaseMutex);
+            return (MIXFNOACCESS);
+        }
         if (FileStat.st_size == 0)
         {
             fprintf(vectorCtr[i].BaseCtr_fd, "Vector Counter: %s - Instances: %s\nDate,Time,", vectorCtr[i].Name, vectorCtr[i].InstName);
@@ -1161,9 +1172,9 @@ Error start_counters(void)
     /* Now Open the single scalar counter Aggr file */
     /* File is open in append mode, in case that it is initially empty */
     /* it prints first an header row containing all scalar counters name */
-    sprintf(DumpFile, "%sscalar_aggr_%s.csv", AggrCtrDir, TimeStamp);
+    nameTooLong = (snprintf(DumpFile, sizeof(DumpFile), "%sscalar_aggr_%s.csv", AggrCtrDir, TimeStamp) >= sizeof(DumpFile));
     pthread_mutex_lock(&AggrMutex);
-    if ((AggrCtr_fd = fopen(DumpFile, "a")) == NULL)
+    if (nameTooLong || (AggrCtr_fd = fopen(DumpFile, "a")) == NULL)
     {   /* Something went wrong - close all previously opened files */
         for (j = 0; j < numScalarCtr; j++)
             fclose(vectorCtr[j].BaseCtr_fd);
@@ -1171,7 +1182,11 @@ Error start_counters(void)
         pthread_mutex_unlock(&AggrMutex);
         return (MIXFNOACCESS);
     }
-    stat(DumpFile, &FileStat);
+    if (stat(DumpFile, &FileStat) != 0)
+    {
+        pthread_mutex_unlock(&AggrMutex);
+        return (MIXFNOACCESS);
+    }
     if (FileStat.st_size == 0)
     {
         fprintf(AggrCtr_fd, "Date,Time,");
@@ -1185,8 +1200,8 @@ Error start_counters(void)
     /* it prints first an header row containing all scalar counters name */
     for (i = 0; i < numVectorCtr; i++)
     {
-        sprintf(DumpFile, "%svector_%d_aggr_%s.csv", AggrCtrDir, i, TimeStamp);
-        if ((vectorCtr[i].AggrCtr_fd = fopen(DumpFile, "a")) == NULL)
+        nameTooLong = (snprintf(DumpFile, sizeof(DumpFile), "%svector_%d_aggr_%s.csv", AggrCtrDir, i, TimeStamp) >= sizeof(DumpFile));
+        if (nameTooLong || (vectorCtr[i].AggrCtr_fd = fopen(DumpFile, "a")) == NULL)
         {   /* Not able to open the i-th vector Aggr file, close all files already open and exit with MIXFNOACCESS */
             for (j = i - 1; j >= 0; j--)
                 fclose(vectorCtr[j].AggrCtr_fd);
@@ -1197,7 +1212,11 @@ Error start_counters(void)
             pthread_mutex_unlock(&AggrMutex);
             return (MIXFNOACCESS);
         }   /* if ((vectorCtr[i].AggrCtr_fd ... */
-        stat(DumpFile, &FileStat);
+        if (stat(DumpFile, &FileStat) != 0)
+        {
+            pthread_mutex_unlock(&AggrMutex);
+            return (MIXFNOACCESS);
+        }
         if (FileStat.st_size == 0)
         {
             fprintf(vectorCtr[i].AggrCtr_fd, "Vector Counter: %s - Instances: %s\nDate,Time,", vectorCtr[i].Name, vectorCtr[i].InstName);

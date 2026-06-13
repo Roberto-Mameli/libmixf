@@ -104,7 +104,8 @@ static void AddEventInList (EventCode evn, uint16_t line, EventList **list)
     if (evn==UNDEFINED)
         return;
 
-    ptr2 = malloc (sizeof (EventList));
+    if ( (ptr2=malloc(sizeof (EventList))) == NULL)
+        return;
     ptr2->event = evn;
     ptr2->line = line;
     ptr2->next = NULL;

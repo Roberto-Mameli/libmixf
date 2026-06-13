@@ -45,6 +45,9 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 - Fixed *retrieve_path()* adding the buffer length as input parameter to avoid possible buffer overflow
 - Fixed possible buffer overflow in *read_files_input_dir()*
 - Fixed buffer overflow in *define_vector_ctr()*
+- Fixed bug in *close_log()* that causes crash if the function is called without a prior invocation of *open_log()*
+- Fixed bug in *define_vector_ctr()* that caused overflow on cumulative number of counter instances to be overlooked
+- Some other fixes throughout the codebase (mainly checks on null pointer conditions and on string lengths)
 ### Security
 
 

@@ -77,7 +77,7 @@
  *                               *
  *********************************/
 /* Private variables for Log Handling functions */
-static FILE             *Log_fd;                              /* File descriptor of the Log Handling functions, local to the library */
+static FILE            *Log_fd = NULL;                        /* File descriptor of the Log Handling functions, local to the library */
 static MediumString     LogFileBaseName = "";                 /* Base Name of the Log File, local to the library */
 static MicroString      LogFileTimeStampFormat = "";          /* Format for the time stamp used for the log file name */
 static bool             LogOpenFlag=false;                    /* Flag used to understand whether the log is open or not, local to the library */
@@ -130,10 +130,20 @@ static Error CloseReopenLog (void)
     if ( LogFileTimeStampFormat[0] != '\0' )
     {
         retrieve_time_date(TimeStamp,LogFileTimeStampFormat);
-        sprintf (LogFileName,"%s_%s.log",LogFileBaseName,TimeStamp);
+        if ( snprintf(LogFileName, sizeof(LogFileName), "%s_%s.log", LogFileBaseName, TimeStamp) >= sizeof(LogFileName) )
+        {
+            LogOpenFlag = false;
+            return (MIXFNOACCESS);
+        }
     }
     else
-        sprintf (LogFileName,"%s.log",LogFileBaseName);
+    {
+        if (snprintf(LogFileName, sizeof(LogFileName), "%s.log", LogFileBaseName) >= sizeof(LogFileName))
+        {
+            LogOpenFlag = false;
+            return (MIXFNOACCESS);
+        }
+    }
 
     /* Open new Log File in append mode */
     if ( (Log_fd=fopen(LogFileName,"a")) == NULL)
