@@ -291,8 +291,8 @@ This function takes an input string, representing a file/directory name to be ch
 
 For example " `myfile` ", " `123.example` ", " `./myfile` " or " `/home/user/myfile` " are all valid file names, while " `my&file` " or " `myfile*` " are considered not valid.
 
-#### _Error retrieve_path (char \*Path)_
-This function provides a string that contains the path of the current working directory in the file system (typically, the path from which the executable was launched). The routine does not allocate memory for the string (i.e. the caller shall allocate the string first).
+#### _Error retrieve_path (char \*Path, size_t PathLen)_
+This function provides a string that contains the path of the current working directory in the file system (typically, the path from which the executable was launched). The routine does not allocate memory for the string (i.e. the caller shall allocate the string first and provide its length in the second parameter).
 
 The call returns `MIXFKO` in case of errors (e.g. permission to read or search a component of the filename was denied), `MIXFOK` in any other case.
 
@@ -335,7 +335,7 @@ int main(int argc, char *argv[], char *envp[])
     char path[255];
     DirContent *ptr, *p;
 
-    if ( retrieve_path(path)!=MIXFOK )
+    if ( retrieve_path(path,255)!=MIXFOK )
     {
         printf ("Unable to retrieve current path\n");
         exit (-1);

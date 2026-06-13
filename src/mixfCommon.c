@@ -127,23 +127,33 @@ Error check_file_name_validity (char *filename)
 /*
  * This function provides a string containing the
  * path of the current working directory in the file system.
- * It does not malloc memory for the string.
+ * It does not malloc memory for the string, which is assumed
+ * to be allocated by the caller. The second parameter
+ * represents the length of the allocated string.
  * Returns MIXFKO in case of errors (e.g. permission to read or
  * search a component of the filename was denied), MIXFOK
  * in any other case.
  */
-Error retrieve_path (char *Path)
+Error retrieve_path (char *Path, size_t PathLen)
 {
     char *cwd;
 
     if ((cwd = getcwd(NULL, MAXFILENAMELEN)) == NULL)
         return (MIXFKO);
 
-    strcpy (Path,cwd);
-    free(cwd);  /* free memory allocated by getcwd() */
+    // Correct check
+    if (strlen(cwd) >= PathLen)
+    {
+        free(cwd);
+        return (MIXFKO);
+    }
+    
+    // Bounded copy
+    strncpy(Path, cwd, PathLen - 1);
+    Path[PathLen - 1] = '\0';
+    free(cwd);
 
     return (MIXFOK);
-
 }
 
 
@@ -159,55 +169,88 @@ Error retrieve_path (char *Path)
 Error read_files_input_dir (char *inputdir, DirContent ** list_of_files)
 {
     /* Local variables */
-    DIR             *currPath;
-    struct dirent   *des;
+    DIR            *currPath;
+    struct dirent  *des;
     struct stat     buf;
-    char            name[MAXFILENAMELEN],
-                    fullName[MAXFILENAMELEN];
+    char            fullName[MAXFILENAMELEN],
+                    dirpath[MAXFILENAMELEN];
+    size_t          inputdirLen,
+                    dirpathLen,
+                    nameLen;
+    bool            appendSlash;
+    DirContent     *first = NULL,
+                   *p     = NULL;
 
-    DirContent   *first = NULL,
-                  *p     = NULL;
+    if (inputdir == NULL || list_of_files == NULL)
+        return (MIXFKO);
 
-    if ( (currPath=opendir(inputdir)) != NULL )
+    *list_of_files = NULL;
+
+    inputdirLen = strlen(inputdir);
+    if (inputdirLen == 0 || inputdirLen >= MAXFILENAMELEN)
+        return (MIXFKO);
+
+    appendSlash = (inputdir[inputdirLen - 1] != '/');
+    if (appendSlash && inputdirLen + 1 >= MAXFILENAMELEN)
+        return (MIXFKO);
+
+    if (appendSlash)
     {
-        /* In case input directory does not end with trailing '/', add it */
-        if (inputdir[strlen(inputdir)-1]!='/')
-            strcat (inputdir,"/");
+        memcpy(dirpath, inputdir, inputdirLen);
+        dirpath[inputdirLen] = '/';
+        dirpath[inputdirLen + 1] = '\0';
+    }
+    else
+    {
+        memcpy(dirpath, inputdir, inputdirLen + 1);
+    }
+    dirpathLen = strlen(dirpath);
 
-        while ( (des = readdir(currPath)) != NULL )
-        {   /* Loop within input dir and evaluate name
-               of the current object within inputdir   */
-            strcpy (name,des->d_name);
-            strcpy (fullName,inputdir);
-            strcat (fullName, name);
+    if ((currPath = opendir(inputdir)) != NULL)
+    {
+        while ((des = readdir(currPath)) != NULL)
+        {
+            nameLen = strlen(des->d_name);
+            if (nameLen == 0 || nameLen >= MAXFILENAMELEN)
+                continue;
 
-            /* Collect info about this object */
-            lstat (fullName, &buf);
+            if (dirpathLen + nameLen >= MAXFILENAMELEN)
+                continue;
 
-            /* If this is a file allocate a new element in the list */
+            memcpy(fullName, dirpath, dirpathLen);
+            memcpy(fullName + dirpathLen, des->d_name, nameLen + 1);
+
+            if (lstat(fullName, &buf) != 0)
+            {
+                if (errno == ENOENT || errno == ENOTDIR)
+                    continue;
+
+                clear_input_file_list(&first);
+                closedir(currPath);
+                return (MIXFKO);
+            }
+
             if (S_ISREG(buf.st_mode))
             {
-                if ( (p=malloc (sizeof(DirContent)) ) == NULL)
+                if ((p = malloc(sizeof(DirContent))) == NULL)
                 {
-
-                    clear_input_file_list (&first);
+                    clear_input_file_list(&first);
+                    closedir(currPath);
                     return (MIXFKO);
                 }
-                strcpy (p->filename,name);
+                strncpy(p->filename, des->d_name, MAXFILENAMELEN - 1);
+                p->filename[MAXFILENAMELEN - 1] = '\0';
                 p->next = first;
                 first = p;
             }
-        }   /* while ( (des = */
+        }
 
-        /* Done, exit and provide back pointer to the newly created list */
         *list_of_files = first;
-        closedir (currPath);
+        closedir(currPath);
         return (MIXFOK);
-
-    }   /* if ( (currPath */
+    }
     else
         return (MIXFKO);
-
 }
 
 

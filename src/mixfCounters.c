@@ -471,7 +471,7 @@ Error define_vector_ctr(uint16_t ctrId, uint16_t ctrInst, uint8_t ctrType, uint3
     vectorCtr[ctrId].NumInstances = ctrInst;
     vectorCtr[ctrId].BaseVal = (uint32_t*)calloc((size_t)ctrInst, (size_t) sizeof(uint32_t));
     vectorCtr[ctrId].AggrVal = (uint32_t*)calloc((size_t)ctrInst, (size_t) sizeof(uint32_t));
-    vectorCtr[ctrId].InstIdName = (MicroString *)calloc((size_t)ctrInst, MICROSTRINGMAXLEN);
+    vectorCtr[ctrId].InstIdName = (MicroString *)calloc((size_t)ctrInst, sizeof(MicroString));
 
     for (i = 0; i < ctrInst; i++)
     {

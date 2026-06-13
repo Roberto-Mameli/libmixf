@@ -41,6 +41,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 - Fixed bug in *check_license()*, that didn't work correctly when hostId was shorter than 8 chars
 - Fixed bug in *check_and_dump_ctr()*, that causes a segmentation fault when base and aggregate dump times starts again from the beginning of the dump times string
 - Fixed bug in *check_ipv4_add_validity()*, that provides a segmentation fault when the input string is longer than 32 characters
+- Fixed *check_url_validity()* that now accepts also *http://localhost* as valid URL
+- Fixed *retrieve_path()* adding the buffer length as input parameter to avoid possible buffer overflow
+- Fixed possible buffer overflow in *read_files_input_dir()*
+- Fixed buffer overflow in *define_vector_ctr()*
 ### Security
 
 

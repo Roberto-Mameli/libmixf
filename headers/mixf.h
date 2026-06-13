@@ -129,10 +129,12 @@ Error check_file_name_validity (char *);
 /* retrieve_path()
    ---------------
    This function provides a string containing the path of the current working
-   directory in the file system. It does not malloc memory for the string.
+   directory in the file system. It does not malloc memory for the string, which
+   is assumed to be allocated by the caller. The second parameter represents the
+   length of the allocated string.
    Returns MIXFKO in case of errors (e.g. permission to read or search a component
    of the filename was denied), MIXFOK in any other case. */
-Error retrieve_path (char *);
+Error retrieve_path (char *, size_t);
 
 /* read_files_input_dir()
    ----------------------
