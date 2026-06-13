@@ -280,7 +280,6 @@ int main(int argc, char *argv[], char *envp[])
         reset_lock(LOCKFILENAME);
         exit (-1);
     }
-/* DEBUG */ printf ("%d\n",__LINE__);
 
     /* Start Counters */
     if ( (start_counters()) != MIXFOK )
@@ -290,8 +289,6 @@ int main(int argc, char *argv[], char *envp[])
         reset_lock(LOCKFILENAME);
         exit (-1);
     }
-
-/* DEBUG */ printf ("%d\n",__LINE__);
 
     alarm (WAKEUPTIMER);            /* used to wake up every minute in order to check if counters shall be dumped */
 
@@ -354,8 +351,6 @@ int main(int argc, char *argv[], char *envp[])
             }
         }   /* if ((c = getchar())!= EOF)) */
 
-/* DEBUG */ printf ("%d\n",__LINE__);
-
         if (check_and_dump_ctr() != MIXFOK)
         {   /* Not able to dump counters */
             printf ("Not able to dump counters\n");
@@ -363,8 +358,6 @@ int main(int argc, char *argv[], char *envp[])
             reset_lock(LOCKFILENAME);
             exit (-1);
         }
-
-/* DEBUG */ printf ("%d\n",__LINE__);
 
     }   /* Infinite Loop */
 

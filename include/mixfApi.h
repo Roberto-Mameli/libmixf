@@ -123,7 +123,7 @@ typedef struct param
         } Car;
         struct
         {   /* Fields specific for literal, filename and mail type parameters */
-            MediumString Def, Val;
+            ExtendedString Def, Val;
         } Lit;
         struct
         {   /* Fields specific for url type parameters */
