@@ -15,7 +15,7 @@
     - [New libmixf macros and data types](#new-libmixf-macros-and-data-types-1)
     - [New libmixf functions](#new-libmixf-functions)
       - [_Error check\_file\_name\_validity (char \*filename)_](#error-check_file_name_validity-char-filename)
-      - [_Error retrieve\_path (char \*Path)_](#error-retrieve_path-char-path)
+      - [_Error retrieve\_path (char \*Path, size\_t PathLen)_](#error-retrieve_path-char-path-size_t-pathlen)
       - [_Error read\_files\_input\_dir (char \*inputdir, DirContent \*\*list\_of\_files)_](#error-read_files_input_dir-char-inputdir-dircontent-list_of_files)
       - [_void clear\_input\_file\_list(DirContent \*\*ptr)_](#void-clear_input_file_listdircontent-ptr)
     - [Examples](#examples)
@@ -32,7 +32,7 @@
     - [Description](#description-2)
     - [New libmixf functions](#new-libmixf-functions-2)
       - [_char \*filter\_and\_extract(char \*Line, const char \*Filter, const char \*StartWith)_](#char-filter_and_extractchar-line-const-char-filter-const-char-startwith)
-      - [_bool strcmp\_wildcards(char \*string1, char \*string2, bool \*WildcardInStr1, bool \*ExactMatch)_](#bool-strcmp_wildcardschar-string1-char-string2-bool-wildcardInStr1-bool-exactmatch)
+      - [_bool strcmp\_wildcards(char \*string1, char \*string2, bool \*WildcardInStr1, bool \*ExactMatch)_](#bool-strcmp_wildcardschar-string1-char-string2-bool-wildcardinstr1-bool-exactmatch)
       - [_void remove\_blanks(char \*buf)_](#void-remove_blankschar-buf)
       - [_void copy\_remove\_blanks(char \*dst, char \*src)_](#void-copy_remove_blankschar-dst-char-src)
       - [_bool only\_digits(char \*inputstr)_](#bool-only_digitschar-inputstr)
@@ -1043,18 +1043,21 @@ Counters are dumped periodically into CSV files at configurable intervals.
 
 Library `libmixf` supports 2 different counter types:
 
-- Peg Counters
-    Peg Counters are characterized by the following properties:
-       o they have initial value always set to 0;
-       o they can only increase;
-       o they are reset every time that counters are dumped to file (i.e. at each base/aggregate interval).
+- **Peg Counters**
 
-- Roller Counters
-    Roller Counters are slightly different from Peg Counters:
-       o they can have a non-null initial value;
-       o they can increase and decrease (but never become negative);
-       o when they are dumped to file, they are not reset.
-    Roller Counters might be useful to keep track of other types of relevant information during the application lifetime (see example below).
+  Peg Counters are characterized by the following properties:
+  - they have initial value always set to 0;
+  - they can only increase;
+  - they are reset every time that counters are dumped to file (i.e. at each base/aggregate interval).
+
+- **Roller Counters**
+
+  Roller Counters are slightly different from Peg Counters:
+  - they can have a non-null initial value;
+  - they can increase and decrease (but never become negative);
+  - when they are dumped to file, they are not reset.
+    
+  Roller Counters might be useful to keep track of other types of relevant information during the application lifetime (see example below).
 
 _Example:_
 

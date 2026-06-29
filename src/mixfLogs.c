@@ -296,8 +296,7 @@ Error define_event (EventCode event, uint8_t level, char * descr)
             return (MIXFFORMATERROR);
         Events[event].NumParams = 0;
         Events[event].Level = level;
-        strncpy (Events[event].Descr[0], p, MEDIUMSTRINGMAXLEN);
-        Events[event].Descr[0][MEDIUMSTRINGMAXLEN] = '\0';
+        snprintf (Events[event].Descr[0], MEDIUMSTRINGMAXLEN+1, "%s", p);
         return (MIXFOK);
     }
 
@@ -310,11 +309,9 @@ Error define_event (EventCode event, uint8_t level, char * descr)
         Events[event].NumParams = 1;
         Events[event].Level = level;
         *(params[0]) = '\0';
-        strncpy (Events[event].Descr[0], p, MEDIUMSTRINGMAXLEN);
-        Events[event].Descr[0][MEDIUMSTRINGMAXLEN] = '\0';
+        snprintf (Events[event].Descr[0], MEDIUMSTRINGMAXLEN+1, "%s", p);
         p = params[0] + 2;
-        strncpy (Events[event].Descr[1], p, MEDIUMSTRINGMAXLEN);
-        Events[event].Descr[1][MEDIUMSTRINGMAXLEN] = '\0';
+        snprintf (Events[event].Descr[1], MEDIUMSTRINGMAXLEN+1, "%s", p);
         return (MIXFOK);
     }
 
@@ -325,14 +322,11 @@ Error define_event (EventCode event, uint8_t level, char * descr)
         Events[event].Level = level;
         *(params[0]) = '\0';
         *(params[1]) = '\0';
-        strncpy (Events[event].Descr[0], p, MEDIUMSTRINGMAXLEN);
-        Events[event].Descr[0][MEDIUMSTRINGMAXLEN] = '\0';
+        snprintf (Events[event].Descr[0], MEDIUMSTRINGMAXLEN+1, "%s", p);
         p = params[0] +2;
-        strncpy (Events[event].Descr[1], p, MEDIUMSTRINGMAXLEN);
-        Events[event].Descr[1][MEDIUMSTRINGMAXLEN] = '\0';
+        snprintf (Events[event].Descr[1], MEDIUMSTRINGMAXLEN+1, "%s", p);
         p = params[1] +2;
-        strncpy (Events[event].Descr[2], p, MEDIUMSTRINGMAXLEN);
-        Events[event].Descr[2][MEDIUMSTRINGMAXLEN] = '\0';
+        snprintf (Events[event].Descr[2], MEDIUMSTRINGMAXLEN+1, "%s", p);
         return (MIXFOK);
     }
 
@@ -342,17 +336,13 @@ Error define_event (EventCode event, uint8_t level, char * descr)
     *(params[0]) = '\0';
     *(params[1]) = '\0';
     *(params[2]) = '\0';
-    strncpy (Events[event].Descr[0], p, MEDIUMSTRINGMAXLEN);
-    Events[event].Descr[0][MEDIUMSTRINGMAXLEN] = '\0';
+    snprintf (Events[event].Descr[0], MEDIUMSTRINGMAXLEN+1, "%s", p);
     p = params[0] +2;
-    strncpy (Events[event].Descr[1], p, MEDIUMSTRINGMAXLEN);
-    Events[event].Descr[1][MEDIUMSTRINGMAXLEN] = '\0';
+    snprintf (Events[event].Descr[1], MEDIUMSTRINGMAXLEN+1, "%s", p);
     p = params[1] +2;
-    strncpy (Events[event].Descr[2], p, MEDIUMSTRINGMAXLEN);
-    Events[event].Descr[2][MEDIUMSTRINGMAXLEN] = '\0';
+    snprintf (Events[event].Descr[2], MEDIUMSTRINGMAXLEN+1, "%s", p);
     p = params[2] +2;
-    strncpy (Events[event].Descr[3], p, MEDIUMSTRINGMAXLEN);
-    Events[event].Descr[3][MEDIUMSTRINGMAXLEN] = '\0';
+    snprintf (Events[event].Descr[3], MEDIUMSTRINGMAXLEN+1, "%s", p);
     return (MIXFOK);
 }
 
