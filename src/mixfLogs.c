@@ -203,7 +203,8 @@ Error define_level_descr (uint8_t level, char * textdescr)
 {
     if ((level<0) || (level>=numlevels))
         return (MIXFKO);
-    strcpy (LogLevelList[level], textdescr);
+    strncpy (LogLevelList[level], textdescr, MICROSTRINGMAXLEN);
+    LogLevelList[level][MICROSTRINGMAXLEN] = '\0';
     return (MIXFOK);
 }
 
@@ -295,7 +296,8 @@ Error define_event (EventCode event, uint8_t level, char * descr)
             return (MIXFFORMATERROR);
         Events[event].NumParams = 0;
         Events[event].Level = level;
-        strcpy (Events[event].Descr[0], p);
+        strncpy (Events[event].Descr[0], p, MEDIUMSTRINGMAXLEN);
+        Events[event].Descr[0][MEDIUMSTRINGMAXLEN] = '\0';
         return (MIXFOK);
     }
 
@@ -308,9 +310,11 @@ Error define_event (EventCode event, uint8_t level, char * descr)
         Events[event].NumParams = 1;
         Events[event].Level = level;
         *(params[0]) = '\0';
-        strcpy (Events[event].Descr[0], p);
+        strncpy (Events[event].Descr[0], p, MEDIUMSTRINGMAXLEN);
+        Events[event].Descr[0][MEDIUMSTRINGMAXLEN] = '\0';
         p = params[0] + 2;
-        strcpy (Events[event].Descr[1], p);
+        strncpy (Events[event].Descr[1], p, MEDIUMSTRINGMAXLEN);
+        Events[event].Descr[1][MEDIUMSTRINGMAXLEN] = '\0';
         return (MIXFOK);
     }
 
@@ -321,11 +325,14 @@ Error define_event (EventCode event, uint8_t level, char * descr)
         Events[event].Level = level;
         *(params[0]) = '\0';
         *(params[1]) = '\0';
-        strcpy (Events[event].Descr[0], p);
+        strncpy (Events[event].Descr[0], p, MEDIUMSTRINGMAXLEN);
+        Events[event].Descr[0][MEDIUMSTRINGMAXLEN] = '\0';
         p = params[0] +2;
-        strcpy (Events[event].Descr[1], p);
+        strncpy (Events[event].Descr[1], p, MEDIUMSTRINGMAXLEN);
+        Events[event].Descr[1][MEDIUMSTRINGMAXLEN] = '\0';
         p = params[1] +2;
-        strcpy (Events[event].Descr[2], p);
+        strncpy (Events[event].Descr[2], p, MEDIUMSTRINGMAXLEN);
+        Events[event].Descr[2][MEDIUMSTRINGMAXLEN] = '\0';
         return (MIXFOK);
     }
 
@@ -335,13 +342,17 @@ Error define_event (EventCode event, uint8_t level, char * descr)
     *(params[0]) = '\0';
     *(params[1]) = '\0';
     *(params[2]) = '\0';
-    strcpy (Events[event].Descr[0], p);
+    strncpy (Events[event].Descr[0], p, MEDIUMSTRINGMAXLEN);
+    Events[event].Descr[0][MEDIUMSTRINGMAXLEN] = '\0';
     p = params[0] +2;
-    strcpy (Events[event].Descr[1], p);
+    strncpy (Events[event].Descr[1], p, MEDIUMSTRINGMAXLEN);
+    Events[event].Descr[1][MEDIUMSTRINGMAXLEN] = '\0';
     p = params[1] +2;
-    strcpy (Events[event].Descr[2], p);
+    strncpy (Events[event].Descr[2], p, MEDIUMSTRINGMAXLEN);
+    Events[event].Descr[2][MEDIUMSTRINGMAXLEN] = '\0';
     p = params[2] +2;
-    strcpy (Events[event].Descr[3], p);
+    strncpy (Events[event].Descr[3], p, MEDIUMSTRINGMAXLEN);
+    Events[event].Descr[3][MEDIUMSTRINGMAXLEN] = '\0';
     return (MIXFOK);
 }
 

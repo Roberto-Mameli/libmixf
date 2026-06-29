@@ -818,7 +818,7 @@ Error update_roller_vector_ctr(uint16_t ctrId, uint16_t *ctrInst, short delta)
     if (BaseCtrActive == false)     /* if counters have not been started return error */
         return (MIXFKO);
 
-    if ((ctrId >= numVectorCtr) || (vectorCtr[ctrId].Type != PEGCTR))
+    if ((ctrId >= numVectorCtr) || (vectorCtr[ctrId].Type != ROLLERCTR))
         return (MIXFKO);
 
     if (vectorCtr[ctrId].Name[0] == '\0')   /* the counter has not been defined through define_vector_ctr() */
@@ -1029,7 +1029,7 @@ Error define_aggr_dump(char* aggrDir, char* aggrTimeFormat, char* aggrTimes)
         hours[0] = aggrTimes[i];
         if (aggrTimes[i+1] == '\0')
             return (MIXFKO);
-        hours[1] = aggrTimes[i]+1;
+        hours[1] = aggrTimes[i+1];
         hours[2] = '\0';
 
         if (aggrTimes[i+2] == '\0')
